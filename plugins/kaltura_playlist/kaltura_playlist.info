@@ -1,0 +1,8 @@
+; $Id$: kaltura_playlist
+name = Kaltura Playlist
+package = Kaltura Media Management
+core = 6.x
+dependencies[] = kaltura
+dependencies[] = views
+dependencies[] = jquery_update
+description = display kaltura views results with a nice playlist UI

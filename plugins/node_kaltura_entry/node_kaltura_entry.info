@@ -1,0 +1,6 @@
+; $Id$: node_kaltura_entry
+name = Kaltura Media Node
+package = Kaltura Media Management
+core = 6.x
+dependencies[] = kaltura
+description = Upload and view video audio and images, storing each media item as a node.
