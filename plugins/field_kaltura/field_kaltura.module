@@ -152,8 +152,8 @@ function field_kaltura_form_alter(&$form, &$form_state, $form_id) {
     $form['#field']['multiple'] = "1";
     $form['field']['multiple']['#type'] = 'hidden';
     $form['field']['multiple']['#default_value'] = 0;
+	unset($form['widget']['default_value_fieldset']);
   }
-  unset($form['widget']['default_value_fieldset']);
 }
 
 /**

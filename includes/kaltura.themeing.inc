@@ -924,7 +924,12 @@ function kaltura_insert_widget() {
     if (bodyTextArea)
       bodyTextArea.value += "'. $entry_list .'";
       '. $fix_subject;
-      $javascript .= ($field_name == 'edit-comment')? 'window.top.document.getElementById("edit-preview").click();': '';
+      if (module_exists('ajax_comments')) {
+        $javascript .= ($field_name == 'edit-comment')? 'window.top.document.getElementById("ajax-comments-submit").click();': '';
+      }
+      else {
+        $javascript .= ($field_name == 'edit-comment')? 'window.top.document.getElementById("edit-preview").click();': '';
+      }      
       $javascript .= ($field_name != 'edit-comment')? 'update_field_thumbs(window.top.document.getElementById(\''. $field_name .'\'), \''. $_kaltura_thumbnail_base_url .'\');': '';
       $javascript .= '
       window.top.kalturaCloseModalBox();

@@ -16,6 +16,7 @@ function node_kaltura_entry_perm() {
     'edit kaltura items',
     'view kaltura items',
     //'edit own ???'
+    'edit own kaltura items'
   );
 }
 
@@ -27,7 +28,8 @@ function node_kaltura_entry_access($op, $node, $account) {
     case 'create':
       return user_access('create kaltura items', $account);
     case 'update':
-      return user_access('edit kaltura items', $account);
+ //     return user_access('edit kaltura items', $account);
+		return user_access('edit kaltura items', $account) || (user_access('edit own kaltura items') && $node->uid == $account->uid); 
     case 'delete':
       return user_access('delete kaltura items', $account);
   }
