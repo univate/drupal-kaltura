@@ -79,44 +79,52 @@ function field_kaltura_field_settings($op, $field) {
       );      
 	  $saved_player = !empty($field['entry_widget']) ? $field['entry_widget'] : KalturaSettings_DEFAULT_VIDEO_PLAYER_UICONF;
 	  $players = kaltura_choose_player(0, 'video', 'entry', FALSE, $saved_player);
-	  $form['entry_widget'] = $players['default_widget'];
-	  $form['entry_widget']['#default_value'] = $saved_player;
+	  $form['kaltura_entry_video_display'] = array(
+		'#type' => 'fieldset',
+		'#title' => t('Video Display'),
+	  );
+	  
+	  $form['kaltura_entry_video_display']['entry_widget'] = $players['default_widget'];
+	  $form['kaltura_entry_video_display']['entry_widget']['#default_value'] = $saved_player;
 
-  $default_cw = variable_get('kaltura_video_entry_cw_type', KalturaSettings_CW_UICONF_ID);
+  $dynamic_dimension_js = '
+  <script type="text/javascript">
+  function set_video_player_dimension(uiconf)
+  {
+	document.getElementById("edit-player-height").value=get_video_player_height(uiconf);
+	document.getElementById("edit-player-width").value=get_video_player_width(uiconf);
+  }
+  </script>
+  ';
 
-  $default_cw = !empty($field['entry_cw']) ? $field['entry_cw'] : $default_cw;
-  $custom_cw = !empty($field['custom_cw']) ? $field['custom_cw'] : '';
+      $form['kaltura_entry_video_display']['player_width'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Player Width'),
+        '#size' => 5,
+        '#prefix' => $dynamic_dimension_js,
+        '#default_value' => !empty($field['player_width']) ? $field['player_width'] : '400',
+      );      
+
+      $form['kaltura_entry_video_display']['player_height'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Player Height'),
+        '#size' => 5,
+        '#default_value' => !empty($field['player_height']) ? $field['player_height'] : '330',
+      );      
+
+	  $default_cw = variable_get('kaltura_video_entry_cw_type', KalturaSettings_CW_UICONF_ID);
+	  $default_cw = !empty($field['entry_cw']) ? $field['entry_cw'] : $default_cw;
+	  $custom_cw = !empty($field['custom_cw']) ? $field['custom_cw'] : '';
+	  list($regular, $custom) = kaltura_choose_cw('kaltura_video_entry_cw_type', 'kaltura_video_entry_cw_custom', $default_cw);
+	  $form['entry_cw'] = $regular;
+	  $form['custom_cw'] = $custom;
+
+	  $form['custom_cw']['#default_value'] = $custom_cw;
   
-  $form['entry_cw'] = array(
-    '#type' => 'select',
-    '#title' => t('Uploader Type'),
-    '#options' => array( KalturaSettings_CW_UICONF_ID_VIDEO => 'Video', KalturaSettings_CW_UICONF_ID_IMAGE => 'Image', KalturaSettings_CW_UICONF_ID_AUDIO => 'Audio', KalturaSettings_CW_UICONF_ID => 'All', KalturaSettings_CW_UICONF_ID_SIMPLE => 'Simple', '1' => 'Custom'),
-    '#attributes' => array('onChange' => 'change_cw(this.options[this.selectedIndex].value)'),
-    '#default_value' => $default_cw,
-  );
-  
-  $pre_custom = '<script type="text/javascript">
-				function change_cw(val) 
-				{
-					div = document.getElementById("entry_custom");
-					if (val == 1) div.style.display="block";
-					else  div.style.display="none";
-				}</script>';
-	
-  $custom_display = ($default_cw != '1' ? 'style="display:none"' : '');					
-  $form['custom_cw'] = array(
-    '#type' => 'textfield',
-    '#size' => 10,
-    '#title' => t('Custom CW'),
-    '#prefix' => $pre_custom . '<div id="entry_custom" '.$custom_display.'>',
-    '#postfix' => '</div>',
-    '#default_value' =>  $custom_cw,
- );
-        
       return $form;
 
     case 'save':
-      return array('allowed_values', 'allowed_values_php', 'thumbsize_height', 'thumbsize_width', 'entry_widget', 'entry_cw', 'custom_cw');
+      return array('allowed_values', 'allowed_values_php', 'thumbsize_height', 'thumbsize_width', 'entry_widget', 'entry_cw', 'custom_cw', 'player_height', 'player_width');
 
     case 'database columns':
       $columns['value'] = array('type' => 'text', 'size' => 'big', 'not null' => FALSE, 'sortable' => TRUE);
@@ -269,12 +277,17 @@ function kaltura_get_default_display($item, $teaser, $node) {
   
   if (is_array($entries) && count($entries)) {
     foreach ($entries as $entry_id) {
-    	$width = $item['#kaltura_field']['thumbsize_width'];
-    	$height = $item['#kaltura_field']['thumbsize_height'];
+    	$width = $item['#kaltura_field']['player_width'];
+    	$height = $item['#kaltura_field']['player_height'];
     	$uiconf = (empty($item['#kaltura_field']['entry_widget']) ? '' : 'uiconf_id="'.$item['#kaltura_field']['entry_widget'].'"');
+    	$dim ="";
       if (!$entry_id) continue;
       
-     $text = '<div class="field-entry-'. $entry_id .'">[kaltura-widget mix="'. $entry_id .'" size="large" '.$uiconf.' /]</div>';
+      if (!empty($width) && !empty($height))
+      {
+		$dim = ' width="'.$width.'" height="'.$height.'"';
+      }
+     $text = '<div class="field-entry-'. $entry_id .'">[kaltura-widget mix="'. $entry_id .'" size="large" '. $uiconf . $dim.' /]</div>';
 
     }
   }

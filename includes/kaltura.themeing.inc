@@ -264,7 +264,6 @@ function kaltura_get_params_from_tag($tag) {
   {
 	$ui_conf = $temp_ui_conf[0];
   }
-  
   $is_entry_node = false;
   if ($kshow_id == -2)
   {
@@ -347,6 +346,7 @@ function kaltura_get_params_from_tag($tag) {
 		}
 		else if ($context == 'kaltura_mix')
 		{
+
 			$ui_conf = variable_get('kaltura_mix_roughcut_cw_type', '');
 			if (!empty($ui_conf)) //found
 			{
@@ -367,7 +367,7 @@ function kaltura_get_params_from_tag($tag) {
   $simple = false;
   if (KalturaSettings_CW_UICONF_ID_SIMPLE == $ui_conf) $simple=true;
   
-  $flash_vars = KalturaHelpers::getContributionWizardFlashVars($kaltura_client->getKs(), $kshow_id, $partner_data, $type, (($context == 'comment')? TRUE: FALSE), $simple);
+  $flash_vars = KalturaHelpers::getContributionWizardFlashVars($kaltura_client->getKs(), $kshow_id, $partner_data, $type, (($context == 'comment')? TRUE: FALSE), $simple, $ui_conf);
   $theme_params->flashVarsStr = KalturaHelpers::flashVarsToString($flash_vars);
 
   if ($partner_data /*&& strpos($partner_data, 'kshow_exist@no')*/) {
@@ -1041,7 +1041,8 @@ function kaltura_get_embed_options($params) {
     $finish_f = '&finishF='. $params['finishF'];
   }
   
-  $flash_vars_str = "externalInterfaceDisabled=false&layoutId=". $player_size['layout_id'] ."&		pd_original_url=". urlencode($protocol . $_SERVER["HTTP_HOST"] . request_uri()) . $widescreen . $finish_f . $autoplay;
+  $flash_vars_str = KalturaHelpers::flashVarsToString(KalturaHelpers::getKalturaPlayerFlashVars(""));
+  $flash_vars_str .= "&externalInterfaceDisabled=false&layoutId=". $player_size['layout_id'] ."&		pd_original_url=". urlencode($protocol . $_SERVER["HTTP_HOST"] . request_uri()) . $widescreen . $finish_f . $autoplay;
   if ($delivery == 'RTMP')
   {
     $flash_vars_str .= "&streamerType=rtmp&streamerUrl=rtmp://rtmpakmi.kaltura.com/ondemand&rtmpFlavors=1";

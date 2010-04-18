@@ -202,8 +202,8 @@ function kaltura_get_partner_details($partner_id, $cms_email, $cms_password) {
 	$session_user = KalturaHelpers::getSessionUser();
 	$config = KalturaHelpers::getServiceConfiguration();
 	$config->partnerId = $partner_id;
-	$kaltura_client = new KalturaClient();
-	$kaltura_client->setConfig($config);
+	$kaltura_client = new KalturaClient($config);
+//	$kaltura_client->setConfig();
 	/**
 	 * here we are trying to retrieve the partner details from the kaltura server
 	 *

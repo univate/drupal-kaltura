@@ -460,7 +460,7 @@ function kaltura_cron() {
 	}
 	if (is_array($all_entries) && count($all_entries)) {
 		$my_entries = implode(',', $all_entries);
-		$result = kaltura_get_entries($my_entries);
+		$result = kaltura_get_entries($my_entries, count($all_entries));
 	}
 	else {
 		$result = FALSE;
@@ -492,9 +492,9 @@ function kaltura_cron() {
 function kaltura_get_entries($entries, $totalEntries, $isAdmin = false) {
 	$kaltura_client = KalturaHelpers::getKalturaClient($isAdmin);
 	$session_user = KalturaHelpers::getSessionUser();
-	$kmf = new KalturaMediaEntryFilter();
+	$kmf = new KalturaBaseEntryFilter();
 	$kmf->idIn = $entries;
-	$result = $kaltura_client->media->listAction($kmf);
+	$result = $kaltura_client->baseEntry->listAction($kmf);
 	//$result = $kaltura_client->getEntries($session_user, $entries, ',', 1);
 	//check if all entries accounted for
 	if ($result->totalCount<$totalEntries) {
@@ -551,6 +551,75 @@ function katura_fetch_widget_html($widget_id) {
 }
 
 /*
+ * define the settings form for choosing a default cw
+ */
+
+function kaltura_choose_cw($cw_var, $cw_custom, $override_cw = 0)
+{
+$return_array = array();
+  if ($override_cw == 0)
+  {
+	  $default_cw = variable_get($cw_var, KalturaSettings_CW_UICONF_ID);
+  }
+  else
+  {
+	$default_cw = $override_cw;
+  }
+
+  $return_array[] = array(
+    '#type' => 'select',
+    '#title' => t('Uploader Type'),
+    '#options' => array( KalturaSettings_CW_UICONF_ID_VIDEO => 'Video', KalturaSettings_CW_UICONF_ID_IMAGE => 'Image', KalturaSettings_CW_UICONF_ID_AUDIO => 'Audio', KalturaSettings_CW_UICONF_ID => 'All', KalturaSettings_CW_UICONF_ID_SIMPLE => 'Simple', '1' => 'Custom'),
+    '#attributes' => array('onChange' => 'change_cw(this.options[this.selectedIndex].value)'),
+    '#suffix' => '<div id="entry_image"></div>', 
+    '#default_value' => $default_cw,
+  );
+  
+  $pre_custom = '<script type="text/javascript">
+				function get_image(val)
+				{
+					if (val == ' . KalturaSettings_CW_UICONF_ID_VIDEO . ') return "<img src=\''. $base_path . drupal_get_path('module', 'kaltura') .'/images/'. 'video-cw.jpg\' />";
+					if (val == ' . KalturaSettings_CW_UICONF_ID_IMAGE . ') return "<img src=\''. $base_path . drupal_get_path('module', 'kaltura') .'/images/'. 'image-cw.jpg\' />";
+					if (val == ' . KalturaSettings_CW_UICONF_ID_AUDIO . ') return "<img src=\''. $base_path . drupal_get_path('module', 'kaltura') .'/images/'. 'audio-cw.jpg\' />";
+					if (val == ' . KalturaSettings_CW_UICONF_ID . ') return "<img src=\''. $base_path . drupal_get_path('module', 'kaltura') .'/images/'. 'all-cw.jpg\' />";
+					
+					return "";
+				}
+				
+				function change_cw(val) 
+				{
+					div = document.getElementById("entry_custom");
+					div_image = document.getElementById("entry_image");
+					if (val == 1) 
+					{
+						div.style.display="block";
+						div_image.style.display="none";
+					}
+					else
+					{
+					  div.style.display="none";
+					  div_image.innerHTML = get_image(val);
+					  div_image.style.display="block";
+					}
+				}
+				$(document).ready(function() {try{change_cw('.$default_cw.');}catch(ex){}});
+				</script>';
+	
+  $custom_display = ($default_cw != '1' ? 'style="display:none"' : '');					
+  $return_array[] = array(
+    '#type' => 'textfield',
+    '#size' => 10,
+    '#title' => t('Custom CW'),
+    '#prefix' => $pre_custom . '<div id="entry_custom" '.$custom_display.'>',
+    '#suffix' => '</div>',
+    '#default_value' => variable_get($cw_custom, ''),
+ );
+ 
+ return $return_array;
+ 
+}
+
+/*
  * define the settings form for choosing a default player
  */
 function kaltura_choose_player($as_single_form, $type, $node_type, $return_widget_html = FALSE, $saved_player=48501) {
@@ -576,6 +645,7 @@ function kaltura_choose_player($as_single_form, $type, $node_type, $return_widge
 		$variable_height = variable_get('kaltura_'.$type.'_height', '364');
 	}
 		$wid = '_'. variable_get('kaltura_partner_id', '');
+		if (!is_numeric($saved_player)) $saved_player = 48501;
 	//	$saved_player = variable_get('kaltura_'.$type.'_'.$node_type.'_widget', KalturaSettings_DEFAULT_VIDEO_PLAYER_UICONF);
 
 		$site_players = array();
@@ -589,27 +659,76 @@ function kaltura_choose_player($as_single_form, $type, $node_type, $return_widge
 		}
 		reset($site_players);
 		$first_uiconf = key($site_players);
+		$players_name = array();
+		foreach($site_players as $one_player_id => $one_layer_props)
+		{
+			$players_name[$one_player_id] = $one_layer_props['name'];
+		}
+		
 		$replace_url = KalturaHelpers::getSwfUrlForWidget($wid  .'/entry_id/_KMCLOGO1/uiconf_id/##uiconf##');
-		$suffix = '<span id="'.$type.'_ph"></span><span >Create new player</span>
+		$suffix = '<table><tr><td><span id="'.$type.'_ph"></span></td><td valign="middle"><span><a href="http://www.kaltura.com/index.php/kmc/kmc2#appstudio|players_list" target="_blank">Create new player</a></span></td></tr></table>
 				<script type="text/javascript">
-			  function change_'.$type.'_player(uiconf)
+			  function get_'.$type.'_defualt_width()
+			  {
+				return "' . $variable_width . '";
+			  }
+			  
+			  function get_'.$type.'_defualt_height()
+			  {
+				return "' . $variable_height . '";
+			  }
+			  
+			  function get_'.$type.'_player_width(uiconf)
+			  {
+				var width;
+				switch (uiconf)
+				{';
+					foreach($site_players as $one_player_id => $one_layer_props)
+					{
+						$suffix .= '
+					case "' . $one_player_id . '": width = "' . $one_layer_props['width'] . '"; break;';					
+					}				
+		$suffix .= '				
+					default: width =  "0";
+				}
+				return (width != "0" ? width : get_'.$type.'_defualt_width());
+			  }
+
+			  function get_'.$type.'_player_height(uiconf)
+			  {
+				var height;
+				switch (uiconf)
+				{';
+					foreach($site_players as $one_player_id => $one_layer_props)
+					{
+						$suffix .= '
+					case "' . $one_player_id . '": height = "' . $one_layer_props['height'] . '"; break;';					
+					}				
+		$suffix .= '				
+					default: height = "0"; break;
+				}
+				return (height != "0" ? height : get_'.$type.'_defualt_height());
+			  }
+			  
+			  function change_'.$type.'_player(uiconf, change_dim)
 			  { 
 			  var url = "' . $replace_url. '";
 			  url=url.replace("##uiconf##", uiconf);
-              var kaltura_swf = new SWFObject(url, "'. $type.'_ph_player", "'. $variable_width .'", "'. $variable_height .'", "9", "#000000");
+              var kaltura_swf = new SWFObject(url, "'. $type.'_ph_player", '. 'get_'.$type.'_player_width(uiconf)' .', '. 'get_'.$type.'_player_height(uiconf)' .', "9", "#000000");
               kaltura_swf.addParam("wmode", "opaque");
               kaltura_swf.addParam("flashVars", "");
               kaltura_swf.addParam("allowScriptAccess", "always");
               kaltura_swf.addParam("allowFullScreen", "TRUE");
               kaltura_swf.addParam("allowNetworking", "all");
               kaltura_swf.write("'.$type.'_ph");
-              }$(document).ready(function() {try{change_'.$type.'_player('.$saved_player.');}catch(ex){}});</script>';
+              try{if (change_dim == 1) set_'.$type.'_player_dimension(uiconf);}catch(ex){}
+              }$(document).ready(function() {try{change_'.$type.'_player("'.$saved_player.'", 0);}catch(ex){}});</script>';
 	  $form['default_widget'] = array(
 		'#type' => 'select',
 		'#title' => t('Video Player for Node'),
-		'#options' => $site_players,
+		'#options' => $players_name,
 		'#suffix' => $suffix,
-		'#attributes' => array('onChange' => 'change_'.$type.'_player(this.options[this.selectedIndex].value)'),
+		'#attributes' => array('onChange' => 'change_'.$type.'_player(this.options[this.selectedIndex].value, 1)'),
 		'#default_value' => $saved_player,
 	  );
 		if ($as_single_form) {

@@ -476,6 +476,25 @@ function kaltura_views_default_views() {
       'field' => 'status',
       'relationship' => 'none',
     ),
+    'kaltura_tags' => array(
+      'operator' => 'contains',
+      'value' => '',
+      'exposed' => TRUE,
+      'expose' => array(
+        'operator' => 'kaltura_tags_op',
+        'label' => 'kaltura: kaltura item tags',
+        'use_operator' => 1,
+        'identifier' => 'kaltura_tags',
+        'optional' => 1,
+        'single' => 0,
+        'remember' => 0,
+        'reduce' => 0,
+      ),
+      'id' => 'kaltura_tags',
+      'table' => 'node_kaltura',
+      'field' => 'kaltura_tags',
+      'relationship' => 'none',
+    ),    
   ));
   $handler->override_option('access', array(
     'type' => 'none',
@@ -593,6 +612,26 @@ function kaltura_views_default_views() {
       'field' => 'status',
       'relationship' => 'none',
     ),
+    'kaltura_tags' => array(
+      'operator' => 'contains',
+      'value' => '',
+      'exposed' => TRUE,
+      'expose' => array(
+        'operator' => 'kaltura_tags_op',
+        'label' => 'kaltura: kaltura item tags',
+        'use_operator' => 1,
+        'identifier' => 'kaltura_tags',
+        'optional' => 1,
+        'single' => 0,
+        'remember' => 0,
+        'reduce' => 0,
+      ),
+      'id' => 'kaltura_tags',
+      'table' => 'node_kaltura',
+      'field' => 'kaltura_tags',
+      'relationship' => 'none',
+    ),    
+    
   ));
   $handler->override_option('access', array(
     'type' => 'none',
@@ -764,6 +803,25 @@ function kaltura_views_default_views() {
       'field' => 'kaltura_video_comment',
       'relationship' => 'none',
     ),
+    'kaltura_tags' => array(
+      'operator' => 'contains',
+      'value' => '',
+      'exposed' => TRUE,
+      'expose' => array(
+        'operator' => 'kaltura_tags_op',
+        'label' => 'kaltura: kaltura item tags',
+        'use_operator' => 1,
+        'identifier' => 'kaltura_tags',
+        'optional' => 1,
+        'single' => 0,
+        'remember' => 0,
+        'reduce' => 0,
+      ),
+      'id' => 'kaltura_tags',
+      'table' => 'node_kaltura',
+      'field' => 'kaltura_tags',
+      'relationship' => 'none',
+    ),        
   ));
   $handler->override_option('access', array(
     'type' => 'none',
@@ -892,6 +950,25 @@ function kaltura_views_default_views() {
       'field' => 'kaltura_video_comment',
       'relationship' => 'none',
     ),
+    'kaltura_tags' => array(
+      'operator' => 'contains',
+      'value' => '',
+      'exposed' => TRUE,
+      'expose' => array(
+        'operator' => 'kaltura_tags_op',
+        'label' => 'kaltura: kaltura item tags',
+        'use_operator' => 1,
+        'identifier' => 'kaltura_tags',
+        'optional' => 1,
+        'single' => 0,
+        'remember' => 0,
+        'reduce' => 0,
+      ),
+      'id' => 'kaltura_tags',
+      'table' => 'node_kaltura',
+      'field' => 'kaltura_tags',
+      'relationship' => 'none',
+    ),        
   ));
   $handler->override_option('access', array(
     'type' => 'none',

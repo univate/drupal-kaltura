@@ -7,7 +7,7 @@
  */
 class KalturaHelpers
 {
-	function getContributionWizardFlashVars($ks, $kshowId, $partner_data, $type, $comment, $simple = false)
+	function getContributionWizardFlashVars($ks, $kshowId, $partner_data, $type, $comment, $simple = false, $uiConf = KalturaSettings_CW_UICONF_ID)
 	{
 		$sessionUser = KalturaHelpers::getSessionUser();
 		$config = KalturaHelpers::getServiceConfiguration();
@@ -46,7 +46,7 @@ class KalturaHelpers
     if ($simple)
 		 $flashVars["uiConfId"] 		= KalturaSettings_CW_UICONF_ID_SIMPLE;
 		else if (!$comment)
-		$flashVars["uiConfId"] 		= KalturaSettings_CW_UICONF_ID;
+		$flashVars["uiConfId"] 		= $uiConf;
 		else
 		$flashVars["uiConfId"] 		= KalturaSettings_CW_COMMENTS_UICONF_ID;
 			
@@ -124,16 +124,16 @@ class KalturaHelpers
 	function getKalturaPlayerFlashVars($ks, $kshowId = -1, $entryId = -1)
 	{
 		$sessionUser = KalturaHelpers::getSessionUser();
-		$config = KalturaHelpers::getServiceConfiguration();
+//		$config = KalturaHelpers::getServiceConfiguration();
 
 		$flashVars = array();
 
-		$flashVars["kshowId"] 		= $kshowId;
-		$flashVars["entryId"] 		= $entryId;
-		$flashVars["partner_id"] 	= $config->partnerId;
-		$flashVars["subp_id"] 		= $config->subPartnerId;
-		$flashVars["uid"] 			= $sessionUser->userId;
-		$flashVars["ks"] 			= $ks;
+//		$flashVars["kshowId"] 		= $kshowId;
+//		$flashVars["entryId"] 		= $entryId;
+//		$flashVars["partner_id"] 	= $config->partnerId;
+//		$flashVars["subp_id"] 		= $config->subPartnerId;
+		$flashVars["uid"] 			= $sessionUser->id;
+//		$flashVars["ks"] 			= $ks;
 
 		return $flashVars;
 	}
@@ -278,8 +278,8 @@ class KalturaHelpers
   {
       static $players;
       
-      $arr['48501'] = 'Light';
-      $arr['48502'] = 'Dark';
+      $arr['48501'] = array('name' => 'Light', 'width' => 0, 'height' => 0);
+      $arr['48502'] = array('name' => 'Dark', 'width' => 0, 'height' => 0);
       
       if (empty($players))
       {
@@ -295,8 +295,12 @@ class KalturaHelpers
             {
               continue;
             }
-            $arr[$listResponse->objects[$i]->id] = $listResponse->objects[$i]->name;
-            $players[$listResponse->objects[$i]->id] = $listResponse->objects[$i]->name;
+            $arr[$listResponse->objects[$i]->id] = array('name' => $listResponse->objects[$i]->name,
+                                                         'width' => $listResponse->objects[$i]->width,
+                                                         'height' => $listResponse->objects[$i]->height);
+            $players[$listResponse->objects[$i]->id] = array('name' => $listResponse->objects[$i]->name,
+                                                         'width' => $listResponse->objects[$i]->width,
+                                                         'height' => $listResponse->objects[$i]->height);
    //         print($listResponse->objects[$i]->tags); //this is a KalturaUiConf object
           }
         }
@@ -318,7 +322,7 @@ class KalturaHelpers
    
 function getSitePlaylistPlayers(&$arr)
 {
-    $arr['1292302'] = 'Playlist';
+    $arr['1292302'] = array('name' => 'Playlist', 'width' => 0, 'height' => 0);
     return KalturaHelpers::getSitePlayers($arr);  
 }
 

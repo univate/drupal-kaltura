@@ -80,33 +80,9 @@ function kaltura_mix_settings_form() {
     '#weight' => 0,
   );
 
-  $default_cw = variable_get('kaltura_mix_roughcut_cw_type', KalturaSettings_CW_UICONF_ID);
-
-  $form['entry_wizards']['kaltura_mix_roughcut_cw_type'] = array(
-    '#type' => 'select',
-    '#title' => t('Uploader Type'),
-    '#options' => array( KalturaSettings_CW_UICONF_ID_VIDEO => 'Video', KalturaSettings_CW_UICONF_ID_IMAGE => 'Image', KalturaSettings_CW_UICONF_ID_AUDIO => 'Audio', KalturaSettings_CW_UICONF_ID => 'All', KalturaSettings_CW_UICONF_ID_SIMPLE => 'Simple', '1' => 'Custom'),
-    '#attributes' => array('onChange' => 'change_cw(this.options[this.selectedIndex].value)'),
-    '#default_value' => $default_cw,
-  );
-  
-  $pre_custom = '<script type="text/javascript">
-				function change_cw(val) 
-				{
-					div = document.getElementById("entry_custom");
-					if (val == 1) div.style.display="block";
-					else  div.style.display="none";
-				}</script>';
-	
-  $custom_display = ($default_cw != '1' ? 'style="display:none"' : '');					
-  $form['entry_wizards']['kaltura_mix_roughcut_cw_custom'] = array(
-    '#type' => 'textfield',
-    '#size' => 10,
-    '#title' => t('Custom CW'),
-    '#prefix' => $pre_custom . '<div id="entry_custom" '.$custom_display.'>',
-    '#postfix' => '</div>',
-    '#default_value' => variable_get('kaltura_mix_roughcut_cw_custom', ''),
- );
+  list($regular, $custom) = 	kaltura_choose_cw('kaltura_mix_roughcut_cw_type', 'kaltura_mix_roughcut_cw_custom');
+  $form['entry_wizards']['kaltura_mix_roughcut_cw_type'] = $regular;
+  $form['entry_wizards']['kaltura_mix_roughcut_cw_custom'] = $custom;
 
 /* Editor section */
   $default_editor = variable_get('kaltura_mix_roughcut_editor_type', KalturaSettings_AE_UICONF_ID);
@@ -133,7 +109,7 @@ function kaltura_mix_settings_form() {
     '#size' => 10,
     '#title' => t('Custom Editor'),
     '#prefix' => $pre_edit_custom . '<div id="editor_custom" '.$custom_editor_display.'>',
-    '#postfix' => '</div>',
+    '#suffix' => '</div>',
     '#default_value' => variable_get('kaltura_mix_roughcut_editor_custom', ''),
  );
 
@@ -846,12 +822,12 @@ function kaltura_update_mix_tags_from_taxonomy(&$node) {
   //echo $voc;
   if ($voc != '') {
     $tags = $node->taxonomy['tags'][$voc];
-    $node->kaltura_tags = $tags;
+    $node->kaltura_tags .= " " . $tags;
   }
   $voc = variable_get('kaltura_mix_admin_tags_voc', '');
   if ($voc != '') {
     $tags = $node->taxonomy['tags'][$voc];
-    $node->kaltura_admin_tags = $tags;
+    $node->kaltura_admin_tags .= " " . $tags;
   }
 }
 
@@ -895,10 +871,14 @@ function node_kaltura_mix_view($node, $teaser = FALSE, $page = FALSE) {
       '#weight' => 7,
     );
   }
-  $node->content['kaltura_thumbnail_url'] = array(
-    '#value' => theme('node_kaltura_mix_thumbnail_url', $node, $teaser),
-    '#weight' => 0,
-  );  
+  //remove this condition if you wan the thumbnaill to show on the video page
+  if ($teaser == 1)
+  {
+	  $node->content['kaltura_thumbnail_url'] = array(
+		'#value' => theme('node_kaltura_mix_thumbnail_url', $node, $teaser),
+		'#weight' => 0,
+	  );  
+  }
   return $node;
 }
 

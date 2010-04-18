@@ -57,18 +57,18 @@ class KalturaSettings
         'white-blue' => array( 'view_uiconf' => '609', 'remix_uiconf' => '608', 'preview_image' => 'white-blue-player.jpg' ),
       ),
       'viewplaylist' => array(
-        'dark' => array( 'view_uiconf' => '48410', 'remix_uiconf' => '48413', 'preview_image' => 'dark-player.jpg' ),
-        'gray' => array( 'view_uiconf' => '48410', 'remix_uiconf' => '48413', 'preview_image' => 'gray-player.jpg' ),
+        'dark' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48413', 'preview_image' => 'dark-player.jpg' ),
+        'gray' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48413', 'preview_image' => 'gray-player.jpg' ),
         'white-blue' => array( 'view_uiconf' => '609', 'remix_uiconf' => '608', 'preview_image' => 'white-blue-player.jpg' ),
       ),
       'video' => array(
-        'dark' => array( 'view_uiconf' => '48410', 'remix_uiconf' => '48413', 'preview_image' => 'dark-player.jpg' ),
-        'gray' => array( 'view_uiconf' => '48410', 'remix_uiconf' => '48413', 'preview_image' => 'gray-player.jpg' ),
+        'dark' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48413', 'preview_image' => 'dark-player.jpg' ),
+        'gray' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48413', 'preview_image' => 'gray-player.jpg' ),
         'white-blue' => array( 'view_uiconf' => '609', 'remix_uiconf' => '608', 'preview_image' => 'white-blue-player.jpg' ),
       ),              
       'roughcut' => array(
-        'dark' => array( 'view_uiconf' => '48410', 'remix_uiconf' => '48413', 'preview_image' => 'dark-player.jpg' ),
-        'gray' => array( 'view_uiconf' => '48410', 'remix_uiconf' => '48413', 'preview_image' => 'gray-player.jpg' ),
+        'dark' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48413', 'preview_image' => 'dark-player.jpg' ),
+        'gray' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48413', 'preview_image' => 'gray-player.jpg' ),
         'white-blue' => array( 'view_uiconf' => '609', 'remix_uiconf' => '608', 'preview_image' => 'white-blue-player.jpg' ),
       ),              
       'comment' => array(

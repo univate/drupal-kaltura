@@ -190,7 +190,7 @@ div.kaltura_field_thumb img { height:100px; }
 
 div.playlist-item { border:none; background:#262626; cursor:pointer; padding:4px; height:73px; color:#9f9f9f; line-height:14px; margin:4px 0px 4px 0px; width:282px; }
 
-div.playlist-item .node_kaltura_kaltura_thumbnail_url { width:auto; float:left; margin-right:4px; }
+div.playlist-item .node_kaltura_kaltura_thumbnail_url { height:100%; width:auto; float:left; margin-right:4px; margin-top:9px;}
 
 div.playlist-item.playing { background:#E5E5E5;}
 
