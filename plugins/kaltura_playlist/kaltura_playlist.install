@@ -40,10 +40,33 @@ function kaltura_playlist_schema() {
         'default' => "",
         'not null' => TRUE
       ),
+      'tag_filter_operator' => array(
+        'description' => t('none'),
+        'type' => 'varchar',
+        'length' => 50,
+        'default' => "",
+        'not null' => TRUE
+      ),
+        'tag_filter' => array(
+        'description' => t('none'),
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => "",
+        'not null' => TRUE
+      ),
     ),
     'primary key' => array('vid'),
   );
   return $schema;
+}
+
+function kaltura_playlist_update_2() {
+  $ret = array();
+
+	db_add_field($ret, 'node_kaltura_playlist', 'tag_filter_operator', array('type' => 'varchar', 'length' => '50', 'default' => '', 'not null' => TRUE));
+	db_add_field($ret, 'node_kaltura_playlist', 'tag_filter', array('type' => 'varchar', 'length' => '255', 'default' => '', 'not null' => TRUE));
+	
+	return $ret;
 }
 
 /**
@@ -67,6 +90,8 @@ function kaltura_populate_nodes() {
     $node->title = str_replace('_', ' ', $view);
     $node->type = 'kaltura_playlist';
     $node->playlist_view = $key;
+    $node->tag_filter_operator = '';
+    $node->tag_filter = '';
     $node->promote = 0;
     $node->sticky = 0;
     $node->status = 1;
