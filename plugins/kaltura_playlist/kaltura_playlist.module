@@ -136,8 +136,8 @@ function kaltura_playlist_form(&$node, &$param) {
 	$js_script .= 'case "'.$name.'":
 	';
   }
-	$js_script .= 'document.getElementById("edit-playlist-tag-filter").style.display="inline"; break;
-	default: document.getElementById("edit-playlist-tag-filter").style.display="none"; break;
+	$js_script .= 'document.getElementById("edit-tag-filter").style.display="inline"; break;
+	default: document.getElementById("edit-tag-filter").style.display="none"; break;
 	}
   }
   </script>';

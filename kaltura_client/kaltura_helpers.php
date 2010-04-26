@@ -25,6 +25,7 @@ class KalturaHelpers
       $flashVars["entryId"] 	 = -1;	     
       $flashVars["jsDelegate"]   = "delegate"; 
       $flashVars["maxUploads"]   = 1; 
+      $flashVars["subPId"]   = $config->subPartnerId; 
     }
 
 		if ($sessionUserId == KalturaSettings_ANONYMOUS_USER_ID) {

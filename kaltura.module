@@ -375,11 +375,12 @@ function kaltura_list_entries() {
 		$pager = theme('pager', NULL, 20, 0, array(), ceil($node_count->c/20));
 	}
 	if ($allow_insert && $field_name) {
-		$html =     '<div id="media-upload-header">
+		$html =     '<div> </div><div id="media-upload-header">
 	<ul id="sidemenu">
 	<li id="tab-kaltura"><a href="'. $_GET['cwurl'] .'">Add Interactive Video</a></li>
 	<li id="tab-kaltura_browse"><a class="current" href="'. url('kaltura/entries/allow-insert/'. $field_id) .'">Browse Interactive Videos</a></li>
-        <li><a href="#" onclick="window.top.kalturaCloseModalBox();return false;">Close</a></li>
+          <li><span>xzczczczcxxz</span></li>
+          <li><span class="close" href="#" onclick="window.top.kalturaCloseModalBox();return false;">&nbsp;&nbsp;&nbsp;&nbsp;</span></li>
         </ul>
     </div><div class="ktitle"><h3>'. $title .'</h3></div>'. $html;
 		$js = '$(document).ready(function() { '. PHP_EOL .'window.top.document.getElementById("kaltura_modal_iframe").className += " remove_overflow"; ';
@@ -854,10 +855,19 @@ function kaltura_upload_block($uiConf = 0, $title = 'Click to Upload Media') {
 	$cw_vars = array(
     'kshow_id' => -2,
     'navigate_back' => 0,
-    'ui_conf' => $uiConf
+    'ui_conf' => $uiConf,
+    'write_output' => $uiConf == KalturaSettings_CW_UICONF_ID_SIMPLE ? 0 : 1
 	);
+	
 	$vars = kaltura_format_cw_vars($cw_vars);
-	return '<input type="button" onclick="kalturaInitModalBox(\''. url("kaltura/contribution_wizard/". $vars) .'\');" value="'.$title.'" />';
+	if ($uiConf == KalturaSettings_CW_UICONF_ID_SIMPLE)
+	{
+		return kaltura_contribution_wizard($vars);
+	}
+	else
+	{
+		return '<input type="button" onclick="kalturaInitModalBox(\''. url("kaltura/contribution_wizard/". $vars) .'\');" value="'.$title.'" />';
+	}
 }
 
 function kaltura_format_cw_vars($vars = array()) {

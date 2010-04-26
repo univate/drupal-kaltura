@@ -385,7 +385,14 @@ function kaltura_get_params_from_tag($tag) {
     $navigate_back = TRUE;
   }
   if (KalturaSettings_CW_UICONF_ID_SIMPLE == $ui_conf) {
-    echo theme('contribution_wizard_simple', $theme_params);
+    if (isset($write_output) && $write_output == 0)
+    {
+	    return theme('contribution_wizard_simple', $theme_params);
+	}
+	else
+	{
+	    echo theme('contribution_wizard_simple', $theme_params);
+	}
   }
   else if ($kshow_id != "-2" && !$add_new) {
     echo theme('contribution_wizard', $theme_params);
@@ -556,13 +563,21 @@ function theme_contribution_wizard_simple($theme_params, $navigate_back = TRUE) 
 		}
 		node_url = node_url + entriesStr;
 		
-		console.log(entries);';
+		console.log(entries);
+		document.getElementById("filStatus").innerHTML = "Upload Complete!";
+		';
 		$javascript .= ($theme_params->mix_id)? 'setTimeout("SendTopToNodePage();", 0);': 'setTimeout("SendTopToEntriesPage();",0);';
 	$javascript .= '}
 
 	delegate.progressHandler = function(args)
 	{	
-		document.getElementById("progress").innerHTML = args[2].title + ": " + args[0] + " / " + args[1];
+		document.getElementById("simpleStatus").style.display="inline";
+		document.getElementById("divKalturaCw").style.display="none";
+		document.getElementById("btnSimpleUpload").style.display="none";
+		document.getElementById("fileName").innerHTML = args[2].title;
+		document.getElementById("filSize").innerHTML = Math.round(args[1]/100) + "KB";
+		document.getElementById("filStatus").innerHTML = "Do not leave this page!!";
+		document.getElementById("progress").innerHTML = Math.round((args[0]*100 / args[1])*100)/100 + "%";
 		console.log(args[2].title + ": " + args[0] + " / " + args[1]);
 	}
     
@@ -607,10 +622,10 @@ function theme_contribution_wizard_simple($theme_params, $navigate_back = TRUE) 
       kso.addParam("wmode", "transparent");
       kso.write("divKalturaCw");
     </script>
-		<div id="userInput">
+		<div id="userInput" style="height:100px">
 		<form>
-			<input type="button" style="position:absolute; top:130; left:240; margin:0;padding:0;" value="Browse & Select">
-			<span style="position:absolute; top:230; left:240; margin:0;padding:0;"><span>Progress so far: </span><span id="progress">&nbsp;</span></span>
+			<input type="button" id="btnSimpleUpload" style="position:absolute; top:130; left:240; margin:0;padding:0;" value="Click to upload">
+			<span style="position:absolute; top:230; left:240; margin:0;padding:0;width:200px"><div id="simpleStatus" style="position:absolute; margin-top:20px;margin-bottom:20px;display:none"><span id="fileName">&nbsp;</span><br/><span>Size: </span><span id="filSize">&nbsp;</span><br/><span>Progress: </span><span id="progress">&nbsp;</span><br/><span id="filStatus">&nbsp;</span></div></span>
 		</form>
 		</div>
     
@@ -658,7 +673,8 @@ function theme_contribution_wizard_field($theme_params, $field_id, $no_collect_e
           <ul id="sidemenu">
           <li id="tab-kaltura"><a class="current" href="'. url($_GET['q']) .'">Add Interactive Video</a></li>
           <li id="tab-kaltura_browse"><a href="'. url('kaltura/entries/allow-insert/'. $field_id, array( 'query' => array( 'filter' => $add_filter, 'cwurl' => url($_GET['q']) ) )) .'">Browse Interactive Videos</a></li>
-          <li><a href="#" onclick="window.top.kalturaCloseModalBox();return false;">Close</a></li>
+          <li><span>xzczczczcxxz</span></li>
+          <li><span class="close" href="#" onclick="window.top.kalturaCloseModalBox();return false;">&nbsp;&nbsp;&nbsp;&nbsp;</span></li>
           </ul>
       </div>';
   }
