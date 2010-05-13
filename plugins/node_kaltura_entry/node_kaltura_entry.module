@@ -547,12 +547,12 @@ function kaltura_update_entry_tags_from_taxonomy(&$node) {
   $voc = variable_get('kaltura_entry_tags_voc', '');
   if ($voc != '') {
     $tags = $node->taxonomy['tags'][$voc];
-    $node->kaltura_tags .= " " . $tags;
+    $node->kaltura_tags = $tags;
   }
   $voc = variable_get('kaltura_entry_admin_tags_voc', '');
   if ($voc != '') {
     $tags = $node->taxonomy['tags'][$voc];
-    $node->kaltura_admin_tags .= " " . $tags;
+    $node->kaltura_admin_tags = $tags;
   }
 }
 

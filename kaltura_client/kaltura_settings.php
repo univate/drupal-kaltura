@@ -72,8 +72,8 @@ class KalturaSettings
         'white-blue' => array( 'view_uiconf' => '609', 'remix_uiconf' => '608', 'preview_image' => 'white-blue-player.jpg' ),
       ),              
       'comment' => array(
-        'dark' => array( 'view_uiconf' => '605', 'remix_uiconf' => '604', 'preview_image' => 'dark-player.jpg' ),
-        'gray' => array( 'view_uiconf' => '607', 'remix_uiconf' => '606', 'preview_image' => 'gray-player.jpg' ),
+        'dark' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48413', 'preview_image' => 'dark-player.jpg' ),
+        'gray' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48413', 'preview_image' => 'gray-player.jpg' ),
         'white-blue' => array( 'view_uiconf' => '609', 'remix_uiconf' => '608', 'preview_image' => 'white-blue-player.jpg' ),
       ),
   );

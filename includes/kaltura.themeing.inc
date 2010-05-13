@@ -107,9 +107,8 @@ function kaltura_replace_tags($content, $is_comment = FALSE, $replace_to_thumb =
     
     $html .= $comment_div .'
       <div id="'. $div_id .'" class="kaltura_wrapper" style="'. (($comment_div != '')? 'display:none;':'') . $align . $embed_options['custom_style'] .'"'. $embed_options['js_events'] .'>'. $links .'</div>'. $kaltura_poweredby;
-     
      if ($show_embed) {
-     	$html .= '<div class="kaltura_embed_code"><strong>Embed on your site:</strong><br /><textarea id="'.$embed_textarea_id.'" onclick="javascript:this.focus; this.select();"></textarea></div>'; 
+     	$html .= '<div class="kaltura_embed_code"><strong>Embed on your site:</strong><br /><textarea style="overflow-y:auto" id="'.$embed_textarea_id.'" onclick="javascript:this.focus; this.select();"></textarea></div>'; 
      }
      
      
@@ -798,9 +797,9 @@ function kaltura_advanced_editor() {
   $partner_data = ($args[2] != 'empty_partner_data')? $args[2]: '';
   $no_refresh = ($args[3] == 'no_refresh')? TRUE: FALSE;
 
-
   $kaltura_editor_width = (variable_get('kaltura_editor_width', ''))? variable_get('kaltura_editor_width', ''): KalturaSettings_AE_WIDTH;
   $kaltura_editor_height = (variable_get('kaltura_editor_height', ''))? variable_get('kaltura_editor_height', ''): KalturaSettings_AE_HEIGHT;
+
   $editor_uiConf = variable_get('kaltura_mix_roughcut_editor_type', '');
   if (!empty($editor_uiConf) && $editor_uiConf == KalturaSettings_AE_CUSTOM)
   {
@@ -823,6 +822,7 @@ function kaltura_advanced_editor() {
   
   $theme_params->height = $kaltura_editor_height;
   $theme_params->width = $kaltura_editor_width;
+
   
   if (!empty($editor_uiConf))
   {
@@ -867,6 +867,7 @@ function theme_advanced_editor($theme_params, $no_refresh) {
   }
   ';
 
+	
   $flash_embed = '
     <div id="divKalturaAe"></div>
     <script type="text/javascript">

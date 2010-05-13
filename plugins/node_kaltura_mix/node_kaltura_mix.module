@@ -90,7 +90,7 @@ function kaltura_mix_settings_form() {
   $form['entry_wizards']['kaltura_mix_roughcut_editor_type'] = array(
     '#type' => 'select',
     '#title' => t('Editor Type'),
-    '#options' => array( KalturaSettings_SE_UICONF_ID => 'Simple', KalturaSettings_AE_UICONF_ID => 'Advanced', '1' => 'Custom - Simple', '2' => 'Custom - Asvanced'),
+    '#options' => array( KalturaSettings_SE_UICONF_ID => 'Simple', KalturaSettings_AE_UICONF_ID => 'Advanced', '1' => 'Custom - Simple', '2' => 'Custom - Advanced'),
     '#attributes' => array('onChange' => 'change_editor(this.options[this.selectedIndex].value)'),
     '#default_value' => $default_editor,
   );
@@ -108,6 +108,7 @@ function kaltura_mix_settings_form() {
     '#type' => 'textfield',
     '#size' => 10,
     '#title' => t('Custom Editor'),
+    '#description' => t('Please insert ui_conf_id only'),    
     '#prefix' => $pre_edit_custom . '<div id="editor_custom" '.$custom_editor_display.'>',
     '#suffix' => '</div>',
     '#default_value' => variable_get('kaltura_mix_roughcut_editor_custom', ''),
@@ -230,6 +231,9 @@ function node_kaltura_mix_node_info() {
 
 function node_kaltura_mix_form(&$node, $form_state) {
   global $user;
+  $kaltura_editor_URL = (variable_get('kaltura_editor_URL', ''))? variable_get('kaltura_editor_URL', ''): KalturaSettings_SE_URL;
+  $kaltura_editor_width = (variable_get('kaltura_editor_width', ''))? variable_get('kaltura_editor_width', ''): KalturaSettings_SE_WIDTH;
+  $kaltura_editor_height = (variable_get('kaltura_editor_height', ''))? variable_get('kaltura_editor_height', ''): KalturaSettings_SE_HEIGHT;
     
   $type = node_get_types('type', $node);
   // if nid exists, it means we are in edit node mode
@@ -250,8 +254,8 @@ function node_kaltura_mix_form(&$node, $form_state) {
     );
     
     //NOTE CM: removed this and enabled player's edit button properly.  is this the right workflow, or should we disable kaltura editor on node edit page completely?
-    $action_buttons = '<input type="button" value="Edit Mix" onclick=" kalturaInitModalBox(\''. url('kaltura/simple_editor/') .
-      '\' + \''. $node->kaltura_entryId .'\' + \'/entry/empty_partner_data/no_refresh\', { width: 890, height: 546 });" />';
+    $action_buttons = '<input type="button" value="Edit Mix" onclick=" kalturaInitModalBox(\''. url($kaltura_editor_URL) .
+      '\' + \'/'. $node->kaltura_entryId .'\' + \'/entry/empty_partner_data/no_refresh\', { width: '.$kaltura_editor_width.', height: '.$kaltura_editor_height.' });" />';
     $form['edit_mix'] = array(
     '#type' => 'item',
     '#value' => $action_buttons,
@@ -822,12 +826,13 @@ function kaltura_update_mix_tags_from_taxonomy(&$node) {
   //echo $voc;
   if ($voc != '') {
     $tags = $node->taxonomy['tags'][$voc];
-    $node->kaltura_tags .= " " . $tags;
+//    $node->kaltura_tags .= " " . $tags;
+    $node->kaltura_tags = $tags;
   }
   $voc = variable_get('kaltura_mix_admin_tags_voc', '');
   if ($voc != '') {
     $tags = $node->taxonomy['tags'][$voc];
-    $node->kaltura_admin_tags .= " " . $tags;
+    $node->kaltura_admin_tags = $tags;
   }
 }
 

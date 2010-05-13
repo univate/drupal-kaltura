@@ -89,9 +89,10 @@ function register_kaltura_partner() {
 	foreach ($_REQUEST['kaltura_content_categories'] as $selected) {
 	 $categories .= $content_categories->categories[$selected] .',';
 	}
-	$categories .= ($_REQUEST['kaltura_adult_content'] == 1)? 'adult': 'non-adult';
+	$partner->adultContent = ($_REQUEST['kaltura_adult_content'] == 1)? true: false;
 
 	$categories = rtrim($categories, ',');
+	if (empty($categories)) $categories="N/A";
 	$partner->contentCategories = $categories;
 	/** OLD API
 	 $session_user = KalturaHelpers::getSessionUser();

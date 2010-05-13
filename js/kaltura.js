@@ -45,7 +45,7 @@ function kalturaInitModalBox ( url, options ) {
 			height = options.height;
 	} else {
 		width = 680;
-		height = 390;
+		height = 360;
 	}
 
 

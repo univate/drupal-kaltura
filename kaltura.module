@@ -570,7 +570,7 @@ $return_array = array();
   $return_array[] = array(
     '#type' => 'select',
     '#title' => t('Uploader Type'),
-    '#options' => array( KalturaSettings_CW_UICONF_ID_VIDEO => 'Video', KalturaSettings_CW_UICONF_ID_IMAGE => 'Image', KalturaSettings_CW_UICONF_ID_AUDIO => 'Audio', KalturaSettings_CW_UICONF_ID => 'All', KalturaSettings_CW_UICONF_ID_SIMPLE => 'Simple', '1' => 'Custom'),
+    '#options' => array( KalturaSettings_CW_UICONF_ID_VIDEO => 'Video', KalturaSettings_CW_UICONF_ID_IMAGE => 'Image', KalturaSettings_CW_UICONF_ID_AUDIO => 'Audio', KalturaSettings_CW_UICONF_ID => 'All',/* KalturaSettings_CW_UICONF_ID_SIMPLE => 'Simple', */ '1' => 'Custom'),
     '#attributes' => array('onChange' => 'change_cw(this.options[this.selectedIndex].value)'),
     '#suffix' => '<div id="entry_image"></div>', 
     '#default_value' => $default_cw,
@@ -611,6 +611,7 @@ $return_array = array();
     '#type' => 'textfield',
     '#size' => 10,
     '#title' => t('Custom CW'),
+    '#description' => t('Please insert ui_conf_id only'),
     '#prefix' => $pre_custom . '<div id="entry_custom" '.$custom_display.'>',
     '#suffix' => '</div>',
     '#default_value' => variable_get($cw_custom, ''),

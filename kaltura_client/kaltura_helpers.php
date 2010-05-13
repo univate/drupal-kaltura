@@ -14,7 +14,7 @@ class KalturaHelpers
 
 		$flashVars = array();
 
-		$flashVars["userId"] = $sessionUser->userId;
+		$flashVars["userId"] = $sessionUser->id;
     if (!$simple)
     {
   		$flashVars["sessionId"] = $ks;
@@ -47,7 +47,7 @@ class KalturaHelpers
     if ($simple)
 		 $flashVars["uiConfId"] 		= KalturaSettings_CW_UICONF_ID_SIMPLE;
 		else if (!$comment)
-		$flashVars["uiConfId"] 		= $uiConf;
+		$flashVars["uiConfId"] 		= (empty($uiConf) ? KalturaSettings_CW_UICONF_ID : $uiConf);
 		else
 		$flashVars["uiConfId"] 		= KalturaSettings_CW_COMMENTS_UICONF_ID;
 			
@@ -77,7 +77,7 @@ class KalturaHelpers
 		$flashVars["partner_id"] 	= $config->partnerId;
 		$flashVars["partnerData"] 	= $partner_data;
 		$flashVars["subp_id"] 		= $config->subPartnerId;
-		$flashVars["uid"] 			= $sessionUser->userId;
+		$flashVars["uid"] 			= $sessionUser->id;
 		$flashVars["ks"] 			= $ks;
 		$flashVars["backF"] 		= "onSimpleEditorBackClick";
 		$flashVars["saveF"] 		= "onSimpleEditorSaveClick";
@@ -110,7 +110,7 @@ class KalturaHelpers
 		$flashVars["partner_id"] 	= $config->partnerId;
 		$flashVars["partnerData"] 	= $partner_data;
 		$flashVars["subp_id"] 		= $config->subPartnerId;
-		$flashVars["uid"] 			= $sessionUser->userId;
+		$flashVars["uid"] 			= $sessionUser->id;
 		$flashVars["ks"] 			= $ks;
 		$flashVars["backF"] 		= "onSimpleEditorBackClick";
 		$flashVars["saveF"] 		= "onSimpleEditorSaveClick";
@@ -265,7 +265,7 @@ class KalturaHelpers
 		}
 		else
 		{
-			$kalturaUser->userId = KalturaSettings_ANONYMOUS_USER_ID;
+			$kalturaUser->id = KalturaSettings_ANONYMOUS_USER_ID;
 		}
 
 		return $kalturaUser;
