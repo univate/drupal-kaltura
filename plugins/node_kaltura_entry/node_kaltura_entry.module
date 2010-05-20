@@ -521,7 +521,10 @@ function node_kaltura_entry_update($node) {
     }
     // we don't expose the tags and admin tags fields, to no need to update taxonomy by hand.
 //    update_entry_node_taxonomy($node);
-    kaltura_update_entry_tags_from_taxonomy($node);
+    if ($node->notification_update !== TRUE)
+	{
+	    kaltura_update_entry_tags_from_taxonomy($node);
+    }
         
     $sql = 'UPDATE {node_kaltura} SET '. $update_str .' WHERE vid = %d';
     db_query($sql, $node->kaltura_tags, $node->kaltura_admin_tags, $node->kstatus, $node->kaltura_media_type, $node->kaltura_duration,

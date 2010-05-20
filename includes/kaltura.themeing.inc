@@ -108,7 +108,8 @@ function kaltura_replace_tags($content, $is_comment = FALSE, $replace_to_thumb =
     $html .= $comment_div .'
       <div id="'. $div_id .'" class="kaltura_wrapper" style="'. (($comment_div != '')? 'display:none;':'') . $align . $embed_options['custom_style'] .'"'. $embed_options['js_events'] .'>'. $links .'</div>'. $kaltura_poweredby;
      if ($show_embed) {
-     	$html .= '<div class="kaltura_embed_code"><strong>Embed on your site:</strong><br /><textarea style="overflow-y:auto" id="'.$embed_textarea_id.'" onclick="javascript:this.focus; this.select();"></textarea></div>'; 
+       if ($params['media_type'] == 'viewplaylist') $title_class="kaltura_embed_title";
+     	$html .= '<div class="kaltura_embed_code"><strong class="'.$title_class.'">Embed code of this video:</strong><br /><textarea style="overflow-y:auto" id="'.$embed_textarea_id.'" onclick="javascript:this.focus; this.select();"></textarea></div>'; 
      }
      
      

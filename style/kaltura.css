@@ -192,9 +192,11 @@ div.kaltura_field_thumb img { height:100px; }
 
 .kaltura_playlist { background:#2e2e2e; width:725px; padding-bottom:4px; } 
 
-div.playlist-item { border:none; background:#262626; cursor:pointer; padding:4px; height:73px; color:#9f9f9f; line-height:14px; margin:4px 0px 4px 0px; width:282px; }
+div.playlist-item { border:none; background:#262626; cursor:pointer; padding:4px; color:#9f9f9f; line-height:14px; margin:4px 0px 4px 0px; width:282px; }
 
 div.playlist-item .node_kaltura_kaltura_thumbnail_url { height:100%; width:auto; float:left; margin-right:4px; margin-top:9px;}
+
+div.playlist-item-line {margin-left:50px; margin-right:4px;}
 
 div.playlist-item.playing { background:#E5E5E5;}
 
@@ -212,6 +214,7 @@ div.playlist-item.playing { background:#E5E5E5;}
 
 .kaltura_playlist .playlist-player { float:left; }
 
+.kaltura_embed_title {color:#efefef;}
 .kaltura_embed_code {color: #333; }
 .kaltura_embed_code textarea { color: #555; border-color: #ccc; border-style: solid; border-width: 1px; background-color: #efefef; overflow: hidden; height: 50px; width: 405px;}
 }

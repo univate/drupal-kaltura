@@ -166,6 +166,24 @@ function switch_to_exist_partner() {
 
 }
 
+function switch_to_saas()
+{
+
+    var href = location.href;
+
+	if(href.indexOf('?') > 0)
+    {
+        href = href + '&op=Continue%20>>';
+    }
+    else
+    {
+        href = href + '?op=Continue%20>>';
+    }
+    href = href + '&kaltura_registration_mode=1';
+
+    location.href = href;
+}
+
 function switch_to_register() {
 
 	var href = location.href;

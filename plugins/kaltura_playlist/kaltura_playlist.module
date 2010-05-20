@@ -383,7 +383,14 @@ function kaltura_get_view_raw_data($view_details, $tag_filter = '', $tag_filter_
 }
 
 function kaltura_wrap_value($attr, $val) {
+if ($attr == 'node_kaltura_kaltura_thumbnail_url')
+{
   return '<div class="'. $attr .'">'. $val .'</div>';
+}
+else
+{
+  return '<div class="'. 'playlist-item-line' .'">'. $val .'</div>';
+}
 }
 
 function kaltura_format_known_fields($attr, $value) {

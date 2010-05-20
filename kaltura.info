@@ -3,7 +3,7 @@ name = Kaltura
 package = Kaltura Media Management
 project = Kaltura
 core = 6.x
-version = "6.x-1.5-dev"
+version = "6.x-2.0-dev"
 description = Infrastructure for managing video, audio and photos - allows to upload and import media files, manage them, and even allow users to collaboratively add and remix media 
-datestamp = "1259698680"
+datestamp = "1274334388"
 

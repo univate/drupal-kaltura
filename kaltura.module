@@ -94,6 +94,14 @@ function kaltura_menu() {
     'weight' => 10,
 	);
 
+	$items['admin/settings/kaltura/entries'] = array(
+    'title' => 'List of Kaltura Items',
+    'page callback' => 'kaltura_list_entries',
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 20,
+	);
+	
 	$items['admin/settings/kaltura/import'] = array(
     'title' => 'Importing Entries from Kaltura to Drupal',
     'file' => 'includes/kaltura.admin.inc',
@@ -557,6 +565,8 @@ function katura_fetch_widget_html($widget_id) {
 
 function kaltura_choose_cw($cw_var, $cw_custom, $override_cw = 0)
 {
+	global $base_path;
+
 $return_array = array();
   if ($override_cw == 0)
   {

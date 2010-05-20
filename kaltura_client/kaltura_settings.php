@@ -40,7 +40,7 @@ define('WORK_WITH_KSHOW', FALSE);
   define('KalturaSettings_AE_HEIGHT',690);
   define('KalturaSettings_AE_CUSTOM',2);
   
-  define('KalturaSettings_CW_COMMENTS_UICONF_ID', 610);
+  define('KalturaSettings_CW_COMMENTS_UICONF_ID', 1638692);
   define('KalturaSettings_DRUPAL_STATS_URL', "http://corp.kaltura.com/stats/drupal/");
   define('KalturaSettings_DEFAULT_VIDEO_PLAYER_UICONF', 'dark');
   define('KalturaSettings_DEFAULT_AUDIO_PLAYER_UICONF', 'dark');

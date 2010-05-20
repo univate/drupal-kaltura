@@ -16,16 +16,16 @@ function kaltura_settings_main() {
 	$items = array();
 	$items[] = l('Server Integration settings', 'admin/settings/kaltura/general');
 	if (module_exists('node_kaltura_entry')) {
-		$items[] = l('Media Node Settings', 'admin/settings/kaltura/kaltura_entry_settings');
+		$items[] = l('Kaltura Media Node Settings', 'admin/settings/kaltura/kaltura_entry_settings');
 	}
 	if (module_exists('node_kaltura_mix')) {
-		$items[] = l('Media Mix Settings', 'admin/settings/kaltura/kaltura_mix_settings');
+		$items[] = l('Kaltura Media Mix Settings', 'admin/settings/kaltura/kaltura_mix_settings');
 	}
 	if (module_exists('kaltura_comments')) {
-		$items[] = l('Video Comments Settings', 'admin/settings/kaltura/kaltura_comments_settings');
+		$items[] = l('Kaltura Video Comments Settings', 'admin/settings/kaltura/kaltura_comments_settings');
 	}
 	if (module_exists('kaltura_playlist')) {
-		$items[] = l('Kaltura Playlist Settings', 'admin/settings/kaltura/kaltura_playlist_settings');
+		$items[] = l('Kaltura Playlist Node Settings', 'admin/settings/kaltura/kaltura_playlist_settings');
 	}
 
 	$items[] = l('Kaltura Credits Settings', 'admin/settings/kaltura/kaltura_credits_settings');
@@ -101,8 +101,8 @@ function register_kaltura_partner() {
 	 */
 	$session_user = KalturaHelpers::getSessionUser();
 	$config = KalturaHelpers::getServiceConfiguration();
-	$kaltura_client = new KalturaClient();
-	$kaltura_client->setConfig($config);
+	$kaltura_client = new KalturaClient($config);
+//	$kaltura_client->setConfig($config);
 
 	watchdog('regis', print_r($partner, TRUE));
 	$res = $kaltura_client->partner->register($partner, $_REQUEST['cms_password']);
@@ -472,7 +472,13 @@ function kaltura_settings_form() {
 				'#value' => 'Complete Installation',
 				'#default_value' => 'Complete Installation',
 				'#weight' => 40,
-					);					
+					);	
+						
+					$switch_to_saas = '<a style="margin-left:50px;" href="#" onclick="switch_to_saas();return false;">Switch to Kaltura SaaS</a>';
+					$form['buttons']['switch_to_saas'] = array(
+					 '#value' => t($switch_to_saas),
+				'#weight' => 60,
+				);
 				}
 			}
 			else
