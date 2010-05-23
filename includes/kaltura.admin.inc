@@ -16,19 +16,19 @@ function kaltura_settings_main() {
 	$items = array();
 	$items[] = l('Server Integration settings', 'admin/settings/kaltura/general');
 	if (module_exists('node_kaltura_entry')) {
-		$items[] = l('Kaltura Media Node Settings', 'admin/settings/kaltura/kaltura_entry_settings');
+		$items[] = l('Media Node Settings', 'admin/settings/kaltura/kaltura_entry_settings');
 	}
 	if (module_exists('node_kaltura_mix')) {
-		$items[] = l('Kaltura Media Mix Settings', 'admin/settings/kaltura/kaltura_mix_settings');
+		$items[] = l('Media Remix Settings', 'admin/settings/kaltura/kaltura_mix_settings');
 	}
 	if (module_exists('kaltura_comments')) {
-		$items[] = l('Kaltura Video Comments Settings', 'admin/settings/kaltura/kaltura_comments_settings');
+		$items[] = l('Video Comments Settings', 'admin/settings/kaltura/kaltura_comments_settings');
 	}
 	if (module_exists('kaltura_playlist')) {
-		$items[] = l('Kaltura Playlist Node Settings', 'admin/settings/kaltura/kaltura_playlist_settings');
+		$items[] = l('Playlist Node Settings', 'admin/settings/kaltura/kaltura_playlist_settings');
 	}
 
-	$items[] = l('Kaltura Credits Settings', 'admin/settings/kaltura/kaltura_credits_settings');
+	$items[] = l('Credits Settings', 'admin/settings/kaltura/kaltura_credits_settings');
 
 	$items[] = l('List of Kaltura Items', 'kaltura/entries');
 
@@ -610,23 +610,40 @@ function kaltura_settings_form() {
 		 '#value' => $not_registered,
 		 );
 		 */
+		 $partner_exist = variable_get('kaltura_partner_id', '');
+		 $readonly_attr = array();
+		 if (!empty($partner_exist))
+		 {
+			$readonly_attr = array('readonly' => 'readonly');
+		 }
+		 
 		$form['kaltura_partner_settings']['kaltura_partner_id'] = array(
       '#type' => 'textfield', 
       '#title' => t('Partner ID'),
       '#default_value' => variable_get('kaltura_partner_id', ''),
       '#size' => 20,
-      '#maxlength' => 10
+      '#maxlength' => 10,
+      '#attributes' => $readonly_attr
 		);
 		$form['kaltura_partner_settings']['cms_email'] = array(
       '#type' => 'textfield',
       '#title' => t('Email'),
       '#default_value' => variable_get('kaltura_partner_cms_email', ''),
+      '#attributes' => $readonly_attr,      
 		);
 		$form['kaltura_partner_settings']['cms_password'] = array(
       '#type' => 'textfield',
       '#title' => t('Password'),
       '#default_value' => variable_get('kaltura_partner_cms_password', ''),
+        '#attributes' => $readonly_attr,    
 		);
+		if (!empty($partner_exist))
+		{
+			$form['kaltura_partner_settings']['kaltura_upd_data'] = array(
+			'#type' => 'item',
+			'#value' => t('You can update your email and password via Kaltura Management Console here: ') . l('http://www.kaltura.com/index.php/kmc', 'http://www.kaltura.com/index.php/kmc', array( 'attributes' => array( 'target' => '_blank' ) ))
+			);
+		}		
 		if (variable_get('kaltura_partner_id', '') == '') {
 			$form_state['storage']['submit'] = 'ImportPartner';
 			$form['kaltura_registration']['buttons']['import_partner'] = array(

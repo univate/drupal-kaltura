@@ -75,7 +75,7 @@ function kaltura_menu() {
 	$items['admin/settings/kaltura/general'] = array(
     'title' => 'Server Integration Settings',
     'file' => 'includes/kaltura.admin.inc',
-    'description' => 'Kaltura\'s server integration settings.',
+    'description' => 'Server integration settings.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('kaltura_settings_form'),
     'access arguments' => array('administer kaltura'),
@@ -84,9 +84,9 @@ function kaltura_menu() {
 	);
 
 	$items['admin/settings/kaltura/kaltura_credits_settings'] = array(
-    'title' => 'Kaltura Credits Settings',
+    'title' => 'Credits Settings',
     'file' => 'includes/kaltura.admin.inc',
-    'description' => 'Kaltura Credits Settings',
+    'description' => 'Credits Settings',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('kaltura_credits_settings_form'),
     'access arguments' => array('administer kaltura'),

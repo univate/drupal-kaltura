@@ -46,7 +46,7 @@ function kaltura_playlist_access($op, $node, $account) {
 function kaltura_playlist_menu() {
   $items = array();
   $items['admin/settings/kaltura/kaltura_playlist_settings'] = array(
-    'title' => 'Kaltura Playlist Node Settings',
+    'title' => 'Playlist Node Settings',
     'description' => 'Administer the kaltura playlist module.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array( 'kaltura_playlist_settings_form' ),
@@ -160,10 +160,11 @@ function kaltura_playlist_form(&$node, &$param) {
   $form['tag_filter_operator'] = array(
     '#type' => 'select', 
     '#title' => t('Tag operator'), 
+    '#description' => t('* "Is equal to" operator works only on a single tag, if using multiple tags on the same node should use "Contains"'),
    '#default_value' => $node->tag_filter_operator, 
     '#options' => $ops,
   );
-  
+    
   $form['tag_filter'] = array(
     '#type' => 'textfield', 
     '#title' => t('Tag value'), 

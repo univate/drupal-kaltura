@@ -148,7 +148,7 @@ function kaltura_views_data() {
       'title' => t('kaltura item number of votes'),
       'help' => t('see kaltura documentation for values'),
       'field' => array(
-        'handler' => 'views_handler_field_numeric',
+        'handler' => 'views_handler_field_kaltura_votes',
         'click_sortable' => FALSE,
       ),
       'filter' => array(
@@ -339,6 +339,15 @@ class views_handler_field_kaltura_duration extends views_handler_field {
       else { $min = (int)($secs/60); $min = ($min < 10)? '0'. $min: $min; $sec = (int)($secs%60); $sec = ($sec < 10)? '0'. $sec: $sec; $durationoutput = ($min .':'. ($sec)); }
 //	return $durationoutput;
     return theme('node_kaltura_entry_duration', $durationoutput);
+  }
+}
+
+class views_handler_field_kaltura_votes extends views_handler_field {
+  function theme($data) {
+    $votes = $data->node_kaltura_kaltura_votes;
+    return "(" . $votes . " counts)";
+
+//    return theme('node_kaltura_entry_duration', $durationoutput);
   }
 }
 
@@ -580,6 +589,258 @@ function kaltura_views_default_views() {
     'weight' => 0,
   ));
   $views[$view->name] = $view;
+/***********************/
+  $view = new view;
+  $view->name = 'kaltura_most_popular_videos_all_fields';
+  $view->description = 'Displays the thumbnails of the videos that were most played. '.
+    'Placing the mouse over the thumbnail will create a quick preview of '.
+    'remixes and collaborative videos. Clicking the thumbnail will lead to the video node page where the video can be viewed.';
+  $view->tag = 'kaltura';
+  $view->view_php = '';
+  $view->base_table = 'node';
+  $view->is_cacheable = FALSE;
+  $view->api_version = 2;
+  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+  $handler = $view->new_display('default', 'Most Popular Videos with All Fields', 'default');
+  $handler->override_option('fields', array(
+    'kaltura_thumbnail_url' => array(
+      'label' => '',
+      'exclude' => 0,
+      'id' => 'kaltura_thumbnail_url',
+      'table' => 'node_kaltura',
+      'field' => 'kaltura_thumbnail_url',
+      'relationship' => 'none',
+    ),
+    'title' => array(
+      'label' => '',
+      'link_to_node' => 1,
+      'exclude' => 0,
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
+      'relationship' => 'none',
+    ),
+    'kaltura_duration' => array(
+      'label' => '',
+      'set_precision' => FALSE,
+      'precision' => 0,
+      'decimal' => '.',
+      'separator' => ',',
+      'prefix' => '',
+      'suffix' => '',
+      'exclude' => 0,
+      'id' => 'kaltura_duration',
+      'table' => 'node_kaltura',
+      'field' => 'kaltura_duration',
+      'relationship' => 'none',
+    ),         
+    'kaltura_entryId' => array(
+      'label' => '',
+      'exclude' => 1,
+      'id' => 'kaltura_entryId',
+      'table' => 'node_kaltura',
+      'field' => 'kaltura_entryId',
+      'relationship' => 'none',
+    ),
+    'kaltura_plays' => array(
+      'label' => 'played',
+      'set_precision' => FALSE,
+      'precision' => 0,
+      'decimal' => '.',
+      'separator' => ',',
+      'prefix' => '',
+      'suffix' => '',
+      'exclude' => 0,
+      'id' => 'kaltura_plays',
+      'table' => 'node_kaltura',
+      'field' => 'kaltura_plays',
+      'override' => array(
+        'button' => 'Override',
+      ),
+      'relationship' => 'none',
+    ),
+      'timestamp' => array(
+      'label' => 'Created at',
+      'prefix' => '',
+      'suffix' => '',
+      'exclude' => 0,      
+      'date_format' => 'small',
+       'field' => 'timestamp',
+       'id' => 'timestamp',
+      'table' => 'node_revisions',     
+      'relationship' => 'none'       
+     ),  
+    'kaltura_tags' => array(
+      'label' => 'Tags',
+      'exclude' => 0,
+      'id' => 'kaltura_tags',
+      'table' => 'node_kaltura',
+      'field' => 'kaltura_tags',
+      'relationship' => 'none',
+      ), 
+    'kaltura_admin_tags' => array(
+      'label' => 'Categories',
+      'exclude' => 0,
+      'id' => 'kaltura_admin_tags',
+      'table' => 'node_kaltura',
+      'field' => 'kaltura_admin_tags',
+      'relationship' => 'none',
+      ), 
+    'user_id' => array(
+      'label' => '',
+      'exclude' => 1,
+      'id' => 'users_uid',
+      'table' => 'users',
+      'field' => 'uid',
+      'relationship' => 'none',
+      ),  
+    'user_name' => array(
+      'label' => 'Created By',
+      'exclude' => 0,
+      'id' => 'users_name',
+      'table' => 'users',
+      'field' => 'name',
+      'relationship' => 'none',
+      ), 
+    'kaltura_plays' => array(
+      'label' => 'Plays',
+      'exclude' => 0,
+      'id' => 'kaltura_plays',
+      'table' => 'node_kaltura',
+      'field' => 'kaltura_plays',
+      'relationship' => 'none',
+      ),                                
+    'kaltura_rank' => array(
+      'label' => '',
+      'exclude' => 0,
+      'id' => 'kaltura_rank',
+      'table' => 'node_kaltura',
+      'field' => 'kaltura_rank',
+      'relationship' => 'none',
+      ),                                        
+    'kaltura_votes' => array(
+      'label' => 'Rank',
+      'exclude' => 0,
+      'id' => 'kaltura_votes',
+      'table' => 'node_kaltura',
+      'field' => 'kaltura_votes',
+      'relationship' => 'none',
+      ),      ));
+  $handler->override_option('sorts', array(
+    'kaltura_plays' => array(
+      'order' => 'DESC',
+      'id' => 'kaltura_plays',
+      'table' => 'node_kaltura',
+      'field' => 'kaltura_plays',
+    ),
+  ));
+  $handler->override_option('filters', array(
+    'kaltura_media_type' => array(
+      'operator' => 'in',
+      'value' => array(
+        '1' => '1',
+        '6' => '6',
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => 'media_type_op',
+        'label' => 'Filter by media type',
+        'use_operator' => 1,
+        'identifier' => 'kaltura_media_type',
+        'optional' => 1,
+        'single' => 0,
+        'remember' => 0,
+        'reduce' => 0,
+      ),
+      'id' => 'kaltura_media_type',
+      'table' => 'node_kaltura',
+      'field' => 'kaltura_media_type',
+      'relationship' => 'none',
+    ),
+    'kaltura_video_comment' => array(
+      'operator' => 'in',
+      'value' => array(
+        '0' => '0',
+      ),
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => 'is_comment_op',
+        'label' => 'Filter by created as comment',
+        'use_operator' => 1,
+        'identifier' => 'kaltura_video_comment',
+        'optional' => 1,
+        'single' => 0,
+        'remember' => 0,
+        'reduce' => 0,
+      ),
+      'id' => 'kaltura_video_comment',
+      'table' => 'node_kaltura',
+      'field' => 'kaltura_video_comment',
+      'relationship' => 'none',
+    ),
+    'status' => array(
+      'operator' => '=',
+      'value' => 1,
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status',
+      'table' => 'node',
+      'field' => 'status',
+      'relationship' => 'none',
+    ),
+    'kaltura_tags' => array(
+      'operator' => 'contains',
+      'value' => '',
+      'exposed' => TRUE,
+      'expose' => array(
+        'operator' => 'kaltura_tags_op',
+        'label' => 'kaltura: kaltura item tags',
+        'use_operator' => 1,
+        'identifier' => 'kaltura_tags',
+        'optional' => 1,
+        'single' => 0,
+        'remember' => 0,
+        'reduce' => 0,
+      ),
+      'id' => 'kaltura_tags',
+      'table' => 'node_kaltura',
+      'field' => 'kaltura_tags',
+      'relationship' => 'none',
+    ),    
+  ));
+  $handler->override_option('access', array(
+    'type' => 'none',
+  ));
+  $handler->override_option('title', 'Most Popular Videos with All Fields');
+  $handler->override_option('empty', 'You did not create any Kaltura items');
+  $handler->override_option('empty_format', '1');
+  $handler->override_option('use_pager', '1');
+  $handler->override_option('distinct', 1);
+  $handler->override_option('style_plugin', 'list');
+  $handler->override_option('style_options', array(
+    'grouping' => '',
+    'type' => 'ul',
+  ));
+  $handler = $view->new_display('page', 'Most Popular Videos', 'page_1');
+  $handler->override_option('path', 'kaltura/most/popular-videos-all-fields');
+  $handler->override_option('menu', array(
+    'type' => 'none',
+    'title' => '',
+    'weight' => 0,
+    'name' => 'navigation',
+  ));
+  $handler->override_option('tab_options', array(
+    'type' => 'none',
+    'title' => '',
+    'weight' => 0,
+  ));
+  $views[$view->name] = $view;
+/***********************/
 
   $view = new view;
   $view->name = 'kaltura_most_popular_audio';

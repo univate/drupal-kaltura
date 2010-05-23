@@ -43,7 +43,7 @@ function node_kaltura_mix_access($op, $node, $account) {
 function node_kaltura_mix_menu() {
   $items = array();
   $items['admin/settings/kaltura/kaltura_mix_settings'] = array(
-    'title' => 'Kaltura Media Mix Settings',
+    'title' => 'Media Remix Settings',
     'description' => 'Administer the kaltura mix module.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array( 'kaltura_mix_settings_form' ),

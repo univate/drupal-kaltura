@@ -42,7 +42,7 @@ function node_kaltura_entry_access($op, $node, $account) {
 function node_kaltura_entry_menu() {
   $items = array();
   $items['admin/settings/kaltura/kaltura_entry_settings'] = array(
-    'title' => 'Kaltura Media Node Settings',
+    'title' => 'Media Node Settings',
     'description' => 'Administer the kaltura entry module.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array( 'kaltura_entry_settings_form' ),
@@ -263,8 +263,7 @@ function node_kaltura_entry_node_info() {
       'module' => 'node_kaltura_entry',
       'description' => t('A Kaltura Media Node is a simple method for creating and displaying rich media (Video, Audio or Image). '.
         'It allows upload from local computer and supports almost all video and audio formats, as well as recording directly from webcam. '.
-        'In addition it supports easy import of all rich media (video, audio, pictures...) from other sites and social networks, such as YouTube, '.
-        'MySpace, Flickr, CCMixter, Jamendo, New York Public Library, any URL on the web etc.'),
+        'In addition it supports easy import of all rich media (video, audio, pictures...) from other sites and social networks. '),
     )
   );
 }

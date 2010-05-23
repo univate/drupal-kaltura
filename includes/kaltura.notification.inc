@@ -129,7 +129,8 @@ function kaltura_notify_node_update($notification) {
   while ($obj = db_fetch_object($nodes)) {
     $node_ids[] = $obj->nid;
   }
-  $updatable_data = array('tags' => 'kaltura_tags', 'admin_tags' => 'kaltura_admin_tags', 'status' => 'kstatus');
+
+  $updatable_data = array('tags' => 'kaltura_tags', 'admin_tags' => 'kaltura_admin_tags', 'status' => 'kstatus','name' => 'title');
   if (count($node_ids) == 1) {
     $updated_node = node_load($node_ids[0]);
     foreach ($updatable_data as $notification_key => $node_key) {

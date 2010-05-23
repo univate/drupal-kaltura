@@ -42,7 +42,7 @@ function kaltura_comments_form_alter(&$form, &$form_state, $form_id) {
 function kaltura_comments_menu() {
   $items = array();
   $items['admin/settings/kaltura/kaltura_comments_settings'] = array(
-    'title' => 'Kaltura Video Comments Settings',
+    'title' => 'Video Comments Settings',
     'description' => 'Administer the Kaltura video comments module.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array( 'kaltura_vc_settings_form' ),
