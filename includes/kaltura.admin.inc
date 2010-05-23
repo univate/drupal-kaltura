@@ -1221,15 +1221,24 @@ function kaltura_check_server_status($admin) {
 		$result = $kaltura_client->session->start($partner_id, $admin_secret, $session_user->screenName, KalturaSessionType::ADMIN);
 	}
 */	
-	$result = KalturaHelpers::getKalturaClient($admin);
-
+	
+	try
+	{
+		$result = KalturaHelpers::getKalturaClient($admin);
+		$kaltura_status = TRUE;
+		$kaltura_error = "";
+	}
+	catch(Exception $ex)
+	{
+		$kaltura_status = FALSE;
+		$kaltura_error = $ex->getMessage();
+	}
+	
 	/*if ($result[]) {
 		$kaltura_status = FALSE;
 		$kaltura_error = $result['error'][0]["code"] .' '. $result['error'][0]["desc"];
 		}
 		else {*/
-	$kaltura_status = TRUE;
-	$kaltura_error = "";
 	//	}
 	return array($kaltura_status, $kaltura_error);
 }
