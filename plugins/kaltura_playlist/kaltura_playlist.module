@@ -161,7 +161,7 @@ function kaltura_playlist_form(&$node, &$param) {
     '#type' => 'select', 
     '#title' => t('Tag operator'), 
     '#description' => t('* "Is equal to" operator works only on a single tag, if using multiple tags on the same node should use "Contains"'),
-   '#default_value' => $node->tag_filter_operator, 
+   '#default_value' => empty($node->tag_filter_operator) ? "contains" : $node->tag_filter_operator, 
     '#options' => $ops,
   );
     

@@ -23,6 +23,10 @@ function kaltura_notification_handler() {
   $admin_secret = variable_get('kaltura_admin_secret', '');
   //$params = $_REQUEST;
   $params = $_POST;
+ /*   foreach($_POST as $key => $val)
+  {
+	error_log($key . "=>" . $val);
+  }*/
   watchdog('kaltura NH', print_r($params, TRUE));
   unset($params['q']);
   $noti = new KalturaNotificationClient($params, $admin_secret);
@@ -133,10 +137,11 @@ function kaltura_notify_node_update($notification) {
   $updatable_data = array('tags' => 'kaltura_tags', 'admin_tags' => 'kaltura_admin_tags', 'status' => 'kstatus','name' => 'title');
   if (count($node_ids) == 1) {
     $updated_node = node_load($node_ids[0]);
+    $updated_node->notification_update = TRUE;
+    $updated_node->body = get_entry_description($notification['media_type'], $notification['entry_id']);
     foreach ($updatable_data as $notification_key => $node_key) {
       if ($updated_node->$node_key != $notification[$notification_key]) {
         $updated_node->$node_key = $notification[$notification_key];
-        $updated_node->notification_update = TRUE;
       }
     }
     kaltura_push_extra_data($updated_node, $notification);
@@ -159,7 +164,9 @@ function kaltura_notify_node_entry_add($type, $notification_data) {
     }
   }
   $node->title = $notification_data['name'];
-  $node->body = '';//'test '. time(); // print_r($notification_data,TRUE).PHP_EOL.print_r($_REQUEST,TRUE);
+//  $node->body = '';//'test '. time(); // print_r($notification_data,TRUE).PHP_EOL.print_r($_REQUEST,TRUE);
+  $node->body = get_entry_description($notification_data['media_type'], $notification_data['entry_id']);
+
   $node->type = 'kaltura_'. $type;
   $node->uid = ($notification_data['puser_id'])? $notification_data['puser_id']: FALSE;
   if ($node->uid === FALSE) {
@@ -232,3 +239,4 @@ function kaltura_push_extra_data(&$node, $data) {
     }
   }
 }
+

@@ -807,7 +807,7 @@ function node_kaltura_mix_update($node) {
     watchdog('upd mix', $node->kaltura_tags);
     
     if ($node->notification_update !== TRUE) {
-      kaltura_update_mix_tags($node->kaltura_entryId, $node->title, $node->kaltura_tags, $node->kaltura_admin_tags);
+      kaltura_update_mix_tags($node->kaltura_entryId, $node->title, $node->body, $node->kaltura_tags, $node->kaltura_admin_tags);
     }
     else {
       watchdog('mix update', 'updating taxonomy from tags '. $node->kaltura_tags);
@@ -961,7 +961,7 @@ function theme_node_kaltura_mix_tags($node) {
  * questions
  * ignored the WORK_WITH_KSHOW section
  */
-function kaltura_update_mix_tags($eid, $name, $tags, $admin_tags) {
+function kaltura_update_mix_tags($eid, $name, $body, $tags, $admin_tags) {
   $admin = 0;
   $need_admin = 1; //who should init this? Anyway since we update admin_tags the answer is yes we need
   if ($need_admin) {
@@ -975,6 +975,7 @@ function kaltura_update_mix_tags($eid, $name, $tags, $admin_tags) {
     $kshow->tags = $tags;
     $kshow->admin_tags = $admin_tags;
     $kshow->name = $name;
+    $kshow->description = $body;
     $result = $kaltura_client->updateKShow($session_user, $eid, $kshow, 1);
   }
   else {
@@ -983,6 +984,7 @@ function kaltura_update_mix_tags($eid, $name, $tags, $admin_tags) {
     $entry->tags = $tags;
     $entry->admin_tags = $admin_tags;
     $entry->name = $name;
+    $entry->description = $body;
     $result = $kaltura_client->mixing->update($eid, $entry);
   }
   

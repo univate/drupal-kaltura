@@ -728,6 +728,8 @@ function kaltura_update_entry_tags($eid, $tags, $admin_tags) {
   $entry->tags = $tags;
   $entry->admin_tag = $admin_tags;
   $entry->name = $_REQUEST['title'];
+  $entry->description = $_REQUEST['body'];
+
   $result = $kaltura_client->media->update($eid, $entry);
   // If we want to collect more data, we can call this function with 3rd parameter FALSE:
   kaltura_add_result_to_entry_data($eid, $result);

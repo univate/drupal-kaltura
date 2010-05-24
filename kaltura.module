@@ -462,6 +462,8 @@ function kaltura_add_result_to_entry_data($eid, $result, $replace = TRUE) {
 function kaltura_cron() {
 	// get all entries from node_kaltura table,
 	// use the getEntries service to retrieve the data of entries
+	try
+	{
 	$get_entries = 'SELECT kaltura_entryId FROM {node_kaltura} node_kaltura LEFT JOIN {node} node ON node.nid = node_kaltura.nid WHERE node.status = 1';
 	$entries = db_query($get_entries);
 	while ($entry = db_fetch_object($entries)) {
@@ -469,7 +471,7 @@ function kaltura_cron() {
 	}
 	if (is_array($all_entries) && count($all_entries)) {
 		$my_entries = implode(',', $all_entries);
-		$result = kaltura_get_entries($my_entries, count($all_entries));
+		$result = kaltura_get_entries($my_entries, count($all_entries), true);
 	}
 	else {
 		$result = FALSE;
@@ -489,6 +491,10 @@ function kaltura_cron() {
 			$updated = db_query($update_entry, $resultObject->status, $resultObject->views, $resultObject->plays, $resultObject->rank, $resultObject->totalRank, $duration,
 			$resultObject->votes, $resultObject->thumbnailUrl, $resultObject->id);
 		}
+	}
+	}
+	catch(Exception $ex)
+	{
 	}
 }
 
@@ -512,13 +518,37 @@ function kaltura_get_entries($entries, $totalEntries, $isAdmin = false) {
 		$kmf->idIn = $entries;
 		$mixResult = $kaltura_client->mixing->listAction($kmf);
 		//merge mix and media entries
-		if($result)$fullResult = array_merge($result->objects, $mixResult->objects);
-		else $fullResult = $mixResult;
+		if($result)
+		{
+			$fullResult = new KalturaBaseEntryListResponse();
+			$fullResult->objects = array_merge($result->objects, $mixResult->objects); 
+			$fullResult->totalCount = $result->totalCount + $mixResult->totalCount;
+		}
+		else $fullResult = $mixResult; 
 	}
 	if($fullResult)return $fullResult;
 	if($result) return $result;
 
 	return FALSE;
+}
+
+/*
+   *** helper function to get the description field from kaltura after notification
+   */
+function get_entry_description($type, $entryId)
+{
+	$kaltura_client = KalturaHelpers::getKalturaClient(true);
+
+	if ($type == 6)
+	{
+		$result = $kaltura_client->mixing->get($entryId);
+		return $result->description;
+	}
+	else
+	{
+		$result = $kaltura_client->baseEntry->get($entryId);
+		return $result->description;
+	}
 }
 
 /*
