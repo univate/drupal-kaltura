@@ -86,8 +86,16 @@ function register_kaltura_partner() {
 
 	// update relevant field with $_REQUEST['kaltura_adult_content']
 	$content_categories = new KalturaContentCategories;
-	foreach ($_REQUEST['kaltura_content_categories'] as $selected) {
-	 $categories .= $content_categories->categories[$selected] .',';
+	$categories = "";
+	if (!empty($_REQUEST['kaltura_content_categories']))
+	{
+		foreach ($_REQUEST['kaltura_content_categories'] as $selected) {
+		 $categories .= $content_categories->categories[$selected] .',';
+		}
+	}
+	else
+	{
+		$categories="N/A";
 	}
 	$partner->adultContent = ($_REQUEST['kaltura_adult_content'] == 1)? true: false;
 
@@ -119,7 +127,7 @@ function register_kaltura_partner() {
 		variable_set('kaltura_partner_cms_password', $_REQUEST['cms_password']);
 		variable_set('kaltura_partner_url2', $_REQUEST['partner_url2']);
 		variable_set('kaltura_notification_type', 0);
-		variable_set('kaltura_content_categories', implode(',', $_REQUEST['kaltura_content_categories']));
+		variable_set('kaltura_content_categories', $categories);
 
 		kaltura_update_kaltura_partner(2, $partner->notificationUrl);
 		kaltura_create_widgets_for_partner($partner->id, $secret);
