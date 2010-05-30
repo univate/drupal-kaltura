@@ -575,7 +575,7 @@ function theme_contribution_wizard_simple($theme_params, $navigate_back = TRUE) 
 		document.getElementById("divKalturaCw").style.display="none";
 		document.getElementById("btnSimpleUpload").style.display="none";
 		document.getElementById("fileName").innerHTML = args[2].title;
-		document.getElementById("filSize").innerHTML = Math.round(args[1]/100) + "KB";
+		document.getElementById("filSize").innerHTML = Math.round(args[1]/1000) + "KB";
 		document.getElementById("filStatus").innerHTML = "Do not leave this page!!";
 		document.getElementById("progress").innerHTML = Math.round((args[0]*100 / args[1])*100)/100 + "%";
 		console.log(args[2].title + ": " + args[0] + " / " + args[1]);
