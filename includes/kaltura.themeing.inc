@@ -610,9 +610,8 @@ function theme_contribution_wizard_simple($theme_params, $navigate_back = TRUE) 
     
     
   $flash_embed = '
-  <style>object, embed{ position:absolute; top:130; left:240; z-index:999;}</style>
 
-    <div id="divKalturaCw"></div>
+    <div id="divKalturaCw" style="position:absolute; top:130; left:240; z-index:999;"></div>
     <script type="text/javascript">
       var kso = new SWFObject("'. $theme_params->swfUrl .'", "kalturaCw", "'. '200' .'", "'. '30' .'", "9", "#000000");
       kso.addParam("flashVars", "'. $theme_params->flashVarsStr .'");
