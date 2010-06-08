@@ -24,7 +24,7 @@ define('WORK_WITH_KSHOW', FALSE);
   define('KalturaSettings_DEFAULT_VIEWPLAYLIST_UICONF', 1292302);
  
   define('KalturaSettings_CW_UICONF_ID_SIMPLE', 1103);
-//  define('KalturaSettings_CW_UICONF_ID_SIMPLE', 1292582);
+//  define('KalturaSettings_CW_UICONF_ID_SIMPLE', 1002613);
 
  define('KalturaSettings_DEFAULT_EDITOR', 'Simple_Editor');
  
@@ -57,23 +57,23 @@ class KalturaSettings
         'white-blue' => array( 'view_uiconf' => '609', 'remix_uiconf' => '608', 'preview_image' => 'white-blue-player.jpg' ),
       ),
       'viewplaylist' => array(
-        'dark' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48413', 'preview_image' => 'dark-player.jpg' ),
-        'gray' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48413', 'preview_image' => 'gray-player.jpg' ),
+        'dark' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48501', 'preview_image' => 'dark-player.jpg' ),
+        'gray' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48501', 'preview_image' => 'gray-player.jpg' ),
         'white-blue' => array( 'view_uiconf' => '609', 'remix_uiconf' => '608', 'preview_image' => 'white-blue-player.jpg' ),
       ),
       'video' => array(
-        'dark' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48413', 'preview_image' => 'dark-player.jpg' ),
-        'gray' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48413', 'preview_image' => 'gray-player.jpg' ),
+        'dark' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48501', 'preview_image' => 'dark-player.jpg' ),
+        'gray' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48501', 'preview_image' => 'gray-player.jpg' ),
         'white-blue' => array( 'view_uiconf' => '609', 'remix_uiconf' => '608', 'preview_image' => 'white-blue-player.jpg' ),
       ),              
       'roughcut' => array(
-        'dark' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48413', 'preview_image' => 'dark-player.jpg' ),
-        'gray' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48413', 'preview_image' => 'gray-player.jpg' ),
+        'dark' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48501', 'preview_image' => 'dark-player.jpg' ),
+        'gray' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48501', 'preview_image' => 'gray-player.jpg' ),
         'white-blue' => array( 'view_uiconf' => '609', 'remix_uiconf' => '608', 'preview_image' => 'white-blue-player.jpg' ),
       ),              
       'comment' => array(
-        'dark' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48413', 'preview_image' => 'dark-player.jpg' ),
-        'gray' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48413', 'preview_image' => 'gray-player.jpg' ),
+        'dark' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48501', 'preview_image' => 'dark-player.jpg' ),
+        'gray' => array( 'view_uiconf' => '48501', 'remix_uiconf' => '48501', 'preview_image' => 'gray-player.jpg' ),
         'white-blue' => array( 'view_uiconf' => '609', 'remix_uiconf' => '608', 'preview_image' => 'white-blue-player.jpg' ),
       ),
   );

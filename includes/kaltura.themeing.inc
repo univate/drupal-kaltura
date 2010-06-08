@@ -572,7 +572,7 @@ function theme_contribution_wizard_simple($theme_params, $navigate_back = TRUE) 
 	delegate.progressHandler = function(args)
 	{	
 		document.getElementById("simpleStatus").style.display="inline";
-		document.getElementById("divKalturaCw").style.display="none";
+//		document.getElementById("divKalturaCw").style.display="none";
 		document.getElementById("btnSimpleUpload").style.display="none";
 		document.getElementById("fileName").innerHTML = args[2].title;
 		document.getElementById("filSize").innerHTML = Math.round(args[1]/1000) + "KB";
