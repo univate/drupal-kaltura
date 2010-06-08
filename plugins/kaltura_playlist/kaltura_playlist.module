@@ -402,6 +402,9 @@ function kaltura_format_known_fields($attr, $value) {
     case 'node_kaltura_kaltura_entryId':
       return FALSE;
       break;
+    case 'node_revisions_timestamp':
+      $return = format_date($value, 'small');
+      break;
     case 'node_changed':
       $return = format_date($value, 'small');
       break;
