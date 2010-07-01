@@ -158,6 +158,17 @@ function kaltura_menu() {
     'type' => MENU_CALLBACK
 	);
 
+  // maybe variable check here and don't create the handler on unless
+  // enabled
+  $items['crossdomain.xml'] = array(
+    'title' => 'crossdomain.xml (auto by kaltura module)',
+    'file' => 'includes/kaltura.crossdomain.inc',
+    'description' => 'Provide crossdomain.xml handler for Kaltura',
+    'page callback' => 'kaltura_crossdomain_xml',
+    'type' => MENU_CALLBACK,
+    'access callback' => TRUE,
+  );
+
 	return $items;
 }
 
