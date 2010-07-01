@@ -1275,14 +1275,14 @@ function kaltura_check_server_status($admin) {
 	return array($kaltura_status, $kaltura_error);
 }
 
-/*
+/**
  * helper function to generate a cms password
  *
  * cms is the "administration panel" for kaltura's partners in kaltura's website
  */
 function kaltura_generate_cms_password() {
-	$pass = '';
-	$pass = md5(time() . $_SERVER['REMOTE_ADDR']);
-	$pass = drupal_substr($pass, 0, 8);
-	return $pass;
+  $pass = '';
+  $pass = md5(time() . ip_address());
+  $pass = drupal_substr($pass, 0, 8);
+  return $pass;
 }
