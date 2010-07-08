@@ -198,9 +198,8 @@ function kaltura_install() {
   require_once($_kaltura_client_folder .'kaltura_settings.php');
   drupal_install_schema('kaltura');
   $stats_url = (KalturaSettings_DRUPAL_STATS_URL) .'install';
-  $install_stats = '<iframe src="'. $stats_url .'" width="1" height="1" border="0" style="border: 0;"></iframe>';
   drupal_set_message('<b>To '. l('complete installation', 'admin/settings/kaltura/general') .' of the Kaltura All in One Video Module installation, '.
-    'you must '. l('get a Partner ID', 'admin/settings/kaltura/general') .'.</b>'. $install_stats);
+    'you must '. l('get a Partner ID', 'admin/settings/kaltura/general') .'.</b>');
 }
 
 /**
@@ -212,8 +211,7 @@ function kaltura_uninstall() {
   require_once($_kaltura_client_folder .'kaltura_settings.php');
   drupal_uninstall_schema('kaltura');
   $stats_url = (KalturaSettings_DRUPAL_STATS_URL) .'uninstall/p/'. variable_get('kaltura_partner_id', '');
-  $uninstall_stats = '<iframe src="'. $stats_url .'" width="1" height="1" border="0" style="border: 0;"></iframe>';
-  drupal_set_message('Kaltura module was uninstalled.'. $uninstall_stats);
+  drupal_set_message('Kaltura module was uninstalled.');
   // get all kaltura_ variables, and delete theme
   $get_vars = 'SELECT name FROM {variable} WHERE name LIKE \'%s\'';
   $result = db_query($get_vars, 'kaltura\_%');
