@@ -251,3 +251,21 @@ function kaltura_requirements($phase) {
     );
   return $reqs;
 }
+
+/**
+ * Expand node_kaltura nid/vid columns to full-sized int fields.
+ * 
+ * http://drupal.org/node/358937
+ */
+function kaltura_update_6000() {
+  $ret = array();
+  $new_field = array(
+    'type' => 'int',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'size' => 'normal',
+  );
+  db_change_field($ret, 'node_kaltura', 'nid', 'nid', $new_field);
+  db_change_field($ret, 'node_kaltura', 'vid', 'vid', $new_field);
+  return $ret;
+}
