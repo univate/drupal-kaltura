@@ -1,13 +1,13 @@
 <?php
 // $Id: kaltura.notification.inc $
 
-/*
+/**
  * @file
  * contains functions for handling all notifications from kaltura
  *
  */
 
-/*
+/**
  * This is the calback function for the kaltura/notification_handler URL
  *
  * This function uses the KalturaNotificationClient class to normalize the received notifications
@@ -25,7 +25,7 @@ function kaltura_notification_handler() {
   $params = $_POST;
  /*   foreach($_POST as $key => $val)
   {
-	error_log($key . "=>" . $val);
+  error_log($key . "=>" . $val);
   }*/
   watchdog('kaltura NH', print_r($params, TRUE));
   unset($params['q']);
@@ -55,7 +55,7 @@ function kaltura_notification_handler() {
   }
 }
 
-/*
+/**
  * This function saves the received notification to the DB
  */
 function kaltura_notification_save($notification_id, $notification_data) {
@@ -63,7 +63,7 @@ function kaltura_notification_save($notification_id, $notification_data) {
   $result = db_query($insert_query, $notification_id, serialize($notification_data));
 }
 
-/*
+/**
  * This function checks if the received notification was already handled - to avoid duplicates
  */
 function kaltura_notification_received($notification_id) {
@@ -73,7 +73,7 @@ function kaltura_notification_received($notification_id) {
   return $count_obj->c;
 }
 
-/*
+/**
  * This function check the notificatio type, and forwards the notification to the appropriate function
  *
  * Some notification types, as described in  kaltura API documentation, are not yet handled here
@@ -82,30 +82,33 @@ function kaltura_forward_notification($noti) {
   watchdog('kaltura notification handler', print_r($noti, TRUE));
   switch ($noti['notification_type']) {
     case 'entry_add': 
-	  if ($noti['media_type'] == 6)
-	  {
-		kaltura_notify_node_entry_add('mix', $noti);
-	  }
-	  else
-	  {
-		kaltura_notify_node_entry_add('entry', $noti);
-	  }
+      if ($noti['media_type'] == 6) {
+        kaltura_notify_node_entry_add('mix', $noti);
+      }
+      else {
+        kaltura_notify_node_entry_add('entry', $noti);
+      }
       break;
-    case 'kshow_add': kaltura_notify_node_entry_add('mix', $noti);
+    case 'kshow_add':
+      kaltura_notify_node_entry_add('mix', $noti);
       break;
-    case 'kshow_update_info': watchdog('KNH', 'notification of type kshow_update_info received<br />'. serialize($noti));
+    case 'kshow_update_info':
+      watchdog('KNH', 'notification of type kshow_update_info received<br />'. serialize($noti));
       break;
-    case 'entry_update_thumbnail': kaltura_update_entry_thumbnail($noti);
+    case 'entry_update_thumbnail':
+      kaltura_update_entry_thumbnail($noti);
       break;
-    case 'entry_update': kaltura_notify_node_update($noti);
+    case 'entry_update':
+      kaltura_notify_node_update($noti);
       break;
-    case 'test': kaltura_test_notification_received();
+    case 'test':
+      kaltura_test_notification_received();
       break;
     default:
   }
 }
 
-/*
+/**
  * helper function to set the notification_status variable to 1
  *
  * should only be called when test notification recieved
@@ -134,7 +137,7 @@ function kaltura_notify_node_update($notification) {
     $node_ids[] = $obj->nid;
   }
 
-  $updatable_data = array('tags' => 'kaltura_tags', 'admin_tags' => 'kaltura_admin_tags', 'status' => 'kstatus','name' => 'title');
+  $updatable_data = array('tags' => 'kaltura_tags', 'admin_tags' => 'kaltura_admin_tags', 'status' => 'kstatus', 'name' => 'title');
   if (count($node_ids) == 1) {
     $updated_node = node_load($node_ids[0]);
     $updated_node->notification_update = TRUE;
@@ -152,7 +155,7 @@ function kaltura_notify_node_update($notification) {
   }
 }
 
-/*
+/**
  * function to handle both add entry notification and add kshow notification
  */
 function kaltura_notify_node_entry_add($type, $notification_data) {
@@ -208,7 +211,7 @@ function kaltura_notify_node_entry_add($type, $notification_data) {
   }
 }
 
-/*
+/**
  * helper function to inject the node object with some extra details from the notification
  */
 function kaltura_push_extra_data(&$node, $data) {

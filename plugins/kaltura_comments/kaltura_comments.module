@@ -64,7 +64,7 @@ function kaltura_vc_settings_form() {
     '#collapsed' => TRUE,
     '#weight' => -1
   );
-  
+
   $saved_player = variable_get('kaltura_comment_entry_widget', KalturaSettings_DEFAULT_COMMENT_PLAYER_UICONF);
   $players = kaltura_choose_player(0, 'comment', 'mix', FALSE, $saved_player);
   $form['kaltura_comment_display']['kaltura_comment_entry_widget'] = $players['default_widget'];
@@ -73,14 +73,14 @@ function kaltura_vc_settings_form() {
     '#type' => 'item',
     '#value' => '<div class="clear-block"></div>',
   );
-  
+
   $form['kaltura_comment_display']['kaltura_comment_delivery_type'] = array(
     '#type' => 'select',
     '#title' => t('Delivery Type'),
     '#options' => array( 'HTTP' => 'Progressive Download (HTTP)', 'RTMP' => 'Adaptive Streaming (RTMP)'),
     '#default_value' => variable_get('kaltura_comment_delivery_type', 'HTTP'),
   );
-  
+
   $form['kaltura_comment_display']['kaltura_comment_width'] = array(
     '#type' => 'textfield',
     '#size' => 5,
@@ -93,6 +93,6 @@ function kaltura_vc_settings_form() {
     '#title' => t('Height (in pixels)'),
     '#default_value' => variable_get('kaltura_comment_height', '244'),
   );
-  
+
   return system_settings_form($form);
 }

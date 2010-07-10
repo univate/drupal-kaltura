@@ -101,7 +101,7 @@ function kaltura_views_data() {
       'sort' => array(
         'handler' => 'views_handler_sort',
       ),
-    ),    
+    ),
     'kaltura_tags' => array(
       'title' => t('kaltura item tags'),
       'help' => t(''),
@@ -115,7 +115,7 @@ function kaltura_views_data() {
       'sort' => array(
         'handler' => 'views_handler_sort',
       ),
-    ),    
+    ),
     'kaltura_duration' => array(
       'title' => t('kaltura item duration'),
       'help' => t(''),
@@ -129,7 +129,7 @@ function kaltura_views_data() {
       'sort' => array(
         'handler' => 'views_handler_sort',
       ),
-    ),    
+    ),
     'kaltura_total_rank' => array(
       'title' => t('kaltura item total rank'),
       'help' => t('total rank is rank multiplied by 1000'),
@@ -206,7 +206,7 @@ function kaltura_views_data() {
       'field' => array(
         'handler' => 'views_handler_field',
       ),
-    ),    
+    ),
     'kaltura_video_comment' => array(
       'title' => t('was the Kaltura node created when adding a comment on another node'),
        'help' => t(''),
@@ -221,13 +221,17 @@ function kaltura_views_data() {
   return $data;
 }
 
-/*
+/**
+ * @todo
+ * This is all wrong, it should be done via hook_views_handlers() which would
+ * mean views can be smart about only loading classes only when they are required
+ * rather then every page load like is happening below.
+ *
  * views module seems to not load in any logical order, so we need to require some of it's
  * files in order to extend some of the classes
- *
  */
-require_once(drupal_get_path('module', 'views') .'/includes/base.inc'); 
-require_once(drupal_get_path('module', 'views') .'/includes/handlers.inc'); 
+require_once(drupal_get_path('module', 'views') .'/includes/base.inc');
+require_once(drupal_get_path('module', 'views') .'/includes/handlers.inc');
 require_once(drupal_get_path('module', 'views') .'/handlers/views_handler_field.inc');
 require_once(drupal_get_path('module', 'views') .'/handlers/views_handler_filter.inc');
 require_once(drupal_get_path('module', 'views') .'/handlers/views_handler_filter_in_operator.inc');
@@ -237,7 +241,7 @@ require_once(drupal_get_path('module', 'views') .'/handlers/views_handler_filter
  * We want to supply our set of options on which we will filter results
  */
 class views_handler_filter_media_type extends views_handler_filter_in_operator {
-  
+
   /*
    * we use only one function to supply our own set of values
    */
@@ -252,7 +256,7 @@ class views_handler_filter_media_type extends views_handler_filter_in_operator {
  * We want to supply our set of options on which we will filter results
  */
 class views_handler_filter_is_comment extends views_handler_filter_in_operator {
-  
+
   /*
    * we use only one function to supply our own set of values
    */
@@ -267,7 +271,7 @@ class views_handler_filter_is_comment extends views_handler_filter_in_operator {
  * We want to theme the thumbnail field ourselvs.
  */
 class views_handler_field_kaltura_thumb extends views_handler_field {
-  
+
   /*
    * return a themed HTML of a kaltura thumbnail field
    */
@@ -290,7 +294,7 @@ class views_handler_field_kaltura_thumb extends views_handler_field {
       return theme('node_kaltura_entry_thumbnail_url', $node, $teaser = TRUE, FALSE, $size);
     }
   }
-  
+
   /*
    * helper function that gets some info about node with id $nid
    */
@@ -301,7 +305,7 @@ class views_handler_field_kaltura_thumb extends views_handler_field {
   }
 
   function has_extra_options() { return TRUE; }
-  
+
   function option_definition() {
     $options = parent::option_definition();
 
@@ -337,7 +341,7 @@ class views_handler_field_kaltura_duration extends views_handler_field {
     $secs = $data->node_kaltura_kaltura_duration;
       if ($secs > 60*60) { $hr = (int)($secs/60); $hr = ($hr < 10)? '0'. $hr: $hr; $min = (int)($secs/60/60); $min = ($min < 10)? '0'. $min: $min; $sec = (int)(($secs/60)%60); $sec = ($sec < 10)? '0'. $sec: $sec; $durationoutput = ($hr .':'. ($min) .':'. ($sec)); }
       else { $min = (int)($secs/60); $min = ($min < 10)? '0'. $min: $min; $sec = (int)($secs%60); $sec = ($sec < 10)? '0'. $sec: $sec; $durationoutput = ($min .':'. ($sec)); }
-//	return $durationoutput;
+//  return $durationoutput;
     return theme('node_kaltura_entry_duration', $durationoutput);
   }
 }
@@ -346,7 +350,6 @@ class views_handler_field_kaltura_votes extends views_handler_field {
   function theme($data) {
     $votes = $data->node_kaltura_kaltura_votes;
     return "(" . $votes . " counts)";
-
 //    return theme('node_kaltura_entry_duration', $durationoutput);
   }
 }
@@ -421,13 +424,13 @@ function kaltura_views_default_views() {
       'label' => 'Created at',
       'prefix' => '',
       'suffix' => '',
-      'exclude' => 0,      
+      'exclude' => 0,
       'date_format' => 'small',
        'field' => 'timestamp',
        'id' => 'timestamp',
-      'table' => 'node_revisions',     
-      'relationship' => 'none'       
-     ),  
+      'table' => 'node_revisions',
+      'relationship' => 'none'
+     ),
     'kaltura_duration' => array(
       'label' => '',
       'set_precision' => FALSE,
@@ -441,7 +444,7 @@ function kaltura_views_default_views() {
       'table' => 'node_kaltura',
       'field' => 'kaltura_duration',
       'relationship' => 'none',
-    ),     
+    ),
     'kaltura_tags' => array(
       'label' => 'Tags',
       'exclude' => 0,
@@ -449,7 +452,7 @@ function kaltura_views_default_views() {
       'table' => 'node_kaltura',
       'field' => 'kaltura_tags',
       'relationship' => 'none',
-      ), 
+      ),
     'kaltura_admin_tags' => array(
       'label' => 'Categories',
       'exclude' => 0,
@@ -457,7 +460,7 @@ function kaltura_views_default_views() {
       'table' => 'node_kaltura',
       'field' => 'kaltura_admin_tags',
       'relationship' => 'none',
-      ), 
+      ),
     'user_id' => array(
       'label' => '',
       'exclude' => 1,
@@ -465,7 +468,7 @@ function kaltura_views_default_views() {
       'table' => 'users',
       'field' => 'uid',
       'relationship' => 'none',
-      ),  
+      ),
     'user_name' => array(
       'label' => 'Created By',
       'exclude' => 0,
@@ -473,7 +476,7 @@ function kaltura_views_default_views() {
       'table' => 'users',
       'field' => 'name',
       'relationship' => 'none',
-      ),                                
+      ),
   ));
   $handler->override_option('sorts', array(
     'kaltura_plays' => array(
@@ -560,7 +563,7 @@ function kaltura_views_default_views() {
       'table' => 'node_kaltura',
       'field' => 'kaltura_tags',
       'relationship' => 'none',
-    ),    
+    ),
   ));
   $handler->override_option('access', array(
     'type' => 'none',
@@ -633,7 +636,7 @@ function kaltura_views_default_views() {
       'table' => 'node_kaltura',
       'field' => 'kaltura_duration',
       'relationship' => 'none',
-    ),         
+    ),
     'kaltura_entryId' => array(
       'label' => '',
       'exclude' => 1,
@@ -663,13 +666,13 @@ function kaltura_views_default_views() {
       'label' => 'Created at',
       'prefix' => '',
       'suffix' => '',
-      'exclude' => 0,      
+      'exclude' => 0,
       'date_format' => 'small',
        'field' => 'timestamp',
        'id' => 'timestamp',
-      'table' => 'node_revisions',     
-      'relationship' => 'none'       
-     ),  
+      'table' => 'node_revisions',
+      'relationship' => 'none'
+     ),
     'kaltura_tags' => array(
       'label' => 'Tags',
       'exclude' => 0,
@@ -677,7 +680,7 @@ function kaltura_views_default_views() {
       'table' => 'node_kaltura',
       'field' => 'kaltura_tags',
       'relationship' => 'none',
-      ), 
+      ),
     'kaltura_admin_tags' => array(
       'label' => 'Categories',
       'exclude' => 0,
@@ -685,7 +688,7 @@ function kaltura_views_default_views() {
       'table' => 'node_kaltura',
       'field' => 'kaltura_admin_tags',
       'relationship' => 'none',
-      ), 
+      ),
     'user_id' => array(
       'label' => '',
       'exclude' => 1,
@@ -693,7 +696,7 @@ function kaltura_views_default_views() {
       'table' => 'users',
       'field' => 'uid',
       'relationship' => 'none',
-      ),  
+      ),
     'user_name' => array(
       'label' => 'Created By',
       'exclude' => 0,
@@ -701,7 +704,7 @@ function kaltura_views_default_views() {
       'table' => 'users',
       'field' => 'name',
       'relationship' => 'none',
-      ), 
+      ),
     'kaltura_plays' => array(
       'label' => 'Plays',
       'exclude' => 0,
@@ -709,7 +712,7 @@ function kaltura_views_default_views() {
       'table' => 'node_kaltura',
       'field' => 'kaltura_plays',
       'relationship' => 'none',
-      ),                                
+      ),
     'kaltura_rank' => array(
       'label' => '',
       'exclude' => 0,
@@ -717,7 +720,7 @@ function kaltura_views_default_views() {
       'table' => 'node_kaltura',
       'field' => 'kaltura_rank',
       'relationship' => 'none',
-      ),                                        
+      ),
     'kaltura_votes' => array(
       'label' => 'Rank',
       'exclude' => 0,
@@ -811,7 +814,7 @@ function kaltura_views_default_views() {
       'table' => 'node_kaltura',
       'field' => 'kaltura_tags',
       'relationship' => 'none',
-    ),    
+    ),
   ));
   $handler->override_option('access', array(
     'type' => 'none',
@@ -866,13 +869,13 @@ function kaltura_views_default_views() {
       'label' => 'Created at',
       'prefix' => '',
       'suffix' => '',
-      'exclude' => 0,      
+      'exclude' => 0,
       'date_format' => 'small',
        'field' => 'timestamp',
        'id' => 'timestamp',
-      'table' => 'node_revisions',     
-      'relationship' => 'none'       
-     ),  
+      'table' => 'node_revisions',
+      'relationship' => 'none'
+     ),
     'kaltura_duration' => array(
       'label' => '',
       'set_precision' => FALSE,
@@ -886,7 +889,7 @@ function kaltura_views_default_views() {
       'table' => 'node_kaltura',
       'field' => 'kaltura_duration',
       'relationship' => 'none',
-    ),              
+    ),
     'kaltura_tags' => array(
       'label' => 'Tags',
       'exclude' => 0,
@@ -894,7 +897,7 @@ function kaltura_views_default_views() {
       'table' => 'node_kaltura',
       'field' => 'kaltura_tags',
       'relationship' => 'none',
-      ), 
+      ),
     'kaltura_admin_tags' => array(
       'label' => 'Categories',
       'exclude' => 0,
@@ -902,7 +905,7 @@ function kaltura_views_default_views() {
       'table' => 'node_kaltura',
       'field' => 'kaltura_admin_tags',
       'relationship' => 'none',
-      ), 
+      ),
     'user_id' => array(
       'label' => '',
       'exclude' => 1,
@@ -910,7 +913,7 @@ function kaltura_views_default_views() {
       'table' => 'users',
       'field' => 'uid',
       'relationship' => 'none',
-      ),  
+      ),
     'user_name' => array(
       'label' => 'Created By',
       'exclude' => 0,
@@ -918,7 +921,7 @@ function kaltura_views_default_views() {
       'table' => 'users',
       'field' => 'name',
       'relationship' => 'none',
-      ),                                       
+      ),
   ));
   $handler->override_option('sorts', array(
     'kaltura_plays' => array(
@@ -1005,8 +1008,8 @@ function kaltura_views_default_views() {
       'table' => 'node_kaltura',
       'field' => 'kaltura_tags',
       'relationship' => 'none',
-    ),    
-    
+    ),
+
   ));
   $handler->override_option('access', array(
     'type' => 'none',
@@ -1091,13 +1094,13 @@ function kaltura_views_default_views() {
       'label' => 'Created at',
       'prefix' => '',
       'suffix' => '',
-      'exclude' => 0,      
+      'exclude' => 0,
       'date_format' => 'small',
        'field' => 'timestamp',
        'id' => 'timestamp',
-      'table' => 'node_revisions',     
-      'relationship' => 'none'       
-     ),     
+      'table' => 'node_revisions',
+      'relationship' => 'none'
+     ),
     'kaltura_duration' => array(
       'label' => '',
       'set_precision' => FALSE,
@@ -1111,7 +1114,7 @@ function kaltura_views_default_views() {
       'table' => 'node_kaltura',
       'field' => 'kaltura_duration',
       'relationship' => 'none',
-    ),           
+    ),
     'kaltura_tags' => array(
       'label' => 'Tags',
       'exclude' => 0,
@@ -1119,7 +1122,7 @@ function kaltura_views_default_views() {
       'table' => 'node_kaltura',
       'field' => 'kaltura_tags',
       'relationship' => 'none',
-      ), 
+      ),
     'kaltura_admin_tags' => array(
       'label' => 'Categories',
       'exclude' => 0,
@@ -1127,7 +1130,7 @@ function kaltura_views_default_views() {
       'table' => 'node_kaltura',
       'field' => 'kaltura_admin_tags',
       'relationship' => 'none',
-      ), 
+      ),
     'user_id' => array(
       'label' => '',
       'exclude' => 1,
@@ -1135,7 +1138,7 @@ function kaltura_views_default_views() {
       'table' => 'users',
       'field' => 'uid',
       'relationship' => 'none',
-      ),  
+      ),
     'user_name' => array(
       'label' => 'Created By',
       'exclude' => 0,
@@ -1143,7 +1146,7 @@ function kaltura_views_default_views() {
       'table' => 'users',
       'field' => 'name',
       'relationship' => 'none',
-      ),                                       
+      ),
   ));
   $handler->override_option('sorts', array(
     'created' => array(
@@ -1253,7 +1256,7 @@ function kaltura_views_default_views() {
       'table' => 'node_kaltura',
       'field' => 'kaltura_tags',
       'relationship' => 'none',
-    ),        
+    ),
   ));
   $handler->override_option('access', array(
     'type' => 'none',
@@ -1324,13 +1327,13 @@ function kaltura_views_default_views() {
       'label' => 'Created at',
       'prefix' => '',
       'suffix' => '',
-      'exclude' => 0,      
+      'exclude' => 0,
       'date_format' => 'small',
        'field' => 'timestamp',
        'id' => 'timestamp',
-      'table' => 'node_revisions',     
-      'relationship' => 'none'       
-     ),     
+      'table' => 'node_revisions',
+      'relationship' => 'none'
+     ),
     'kaltura_duration' => array(
       'label' => '',
       'set_precision' => FALSE,
@@ -1344,7 +1347,7 @@ function kaltura_views_default_views() {
       'table' => 'node_kaltura',
       'field' => 'kaltura_duration',
       'relationship' => 'none',
-    ),           
+    ),
     'kaltura_tags' => array(
       'label' => 'Tags',
       'exclude' => 0,
@@ -1352,7 +1355,7 @@ function kaltura_views_default_views() {
       'table' => 'node_kaltura',
       'field' => 'kaltura_tags',
       'relationship' => 'none',
-      ), 
+      ),
     'kaltura_admin_tags' => array(
       'label' => 'Categories',
       'exclude' => 0,
@@ -1360,7 +1363,7 @@ function kaltura_views_default_views() {
       'table' => 'node_kaltura',
       'field' => 'kaltura_admin_tags',
       'relationship' => 'none',
-      ), 
+      ),
     'user_id' => array(
       'label' => '',
       'exclude' => 1,
@@ -1368,7 +1371,7 @@ function kaltura_views_default_views() {
       'table' => 'users',
       'field' => 'uid',
       'relationship' => 'none',
-      ),  
+      ),
     'user_name' => array(
       'label' => 'Created By',
       'exclude' => 0,
@@ -1376,8 +1379,8 @@ function kaltura_views_default_views() {
       'table' => 'users',
       'field' => 'name',
       'relationship' => 'none',
-      ),                                
-       
+      ),
+
   ));
   $handler->override_option('filters', array(
     'uid_current' => array(
@@ -1458,7 +1461,7 @@ function kaltura_views_default_views() {
       'table' => 'node_kaltura',
       'field' => 'kaltura_tags',
       'relationship' => 'none',
-    ),        
+    ),
   ));
   $handler->override_option('access', array(
     'type' => 'none',
@@ -1645,6 +1648,6 @@ function kaltura_views_default_views() {
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
   $views[$view->name] = $view;
-  
+
   return $views;
 }

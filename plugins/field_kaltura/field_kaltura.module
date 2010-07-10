@@ -38,17 +38,18 @@ function field_kaltura_theme() {
  */
 function field_kaltura_field_info() {
   $fields = array();
-  if (module_exists('node_kaltura_entry'))
+  if (module_exists('node_kaltura_entry')) {
     $fields['Kaltura_Media'] = array(
       'label' => t('Kaltura Media'),
       'description' => t('Store text in the database.'),
     );
-  if (module_exists('node_kaltura_mix'))
+  }
+  if (module_exists('node_kaltura_mix')) {
     $fields['Kaltura_Media_Remix'] = array(
       'label' => t('Kaltura Media Remix'),
       'description' => t('Store text in the database.'),
     );
-
+  }
   return $fields;
 }
 
@@ -77,25 +78,25 @@ function field_kaltura_field_settings($op, $field) {
         '#size' => 5,
         '#default_value' => !empty($field['thumbsize_height']) ? $field['thumbsize_height'] : '',
       );      
-	  $saved_player = !empty($field['entry_widget']) ? $field['entry_widget'] : KalturaSettings_DEFAULT_VIDEO_PLAYER_UICONF;
-	  $players = kaltura_choose_player(0, 'video', 'entry', FALSE, $saved_player);
-	  $form['kaltura_entry_video_display'] = array(
-		'#type' => 'fieldset',
-		'#title' => t('Video Display'),
-	  );
-	  
-	  $form['kaltura_entry_video_display']['entry_widget'] = $players['default_widget'];
-	  $form['kaltura_entry_video_display']['entry_widget']['#default_value'] = $saved_player;
+      $saved_player = !empty($field['entry_widget']) ? $field['entry_widget'] : KalturaSettings_DEFAULT_VIDEO_PLAYER_UICONF;
+      $players = kaltura_choose_player(0, 'video', 'entry', FALSE, $saved_player);
+      $form['kaltura_entry_video_display'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Video Display'),
+      );
+    
+      $form['kaltura_entry_video_display']['entry_widget'] = $players['default_widget'];
+      $form['kaltura_entry_video_display']['entry_widget']['#default_value'] = $saved_player;
 
-  $dynamic_dimension_js = '
+      $dynamic_dimension_js = '
   <script type="text/javascript">
   function set_video_player_dimension(uiconf)
   {
-	document.getElementById("edit-player-height").value=get_video_player_height(uiconf);
-	document.getElementById("edit-player-width").value=get_video_player_width(uiconf);
+  document.getElementById("edit-player-height").value=get_video_player_height(uiconf);
+  document.getElementById("edit-player-width").value=get_video_player_width(uiconf);
   }
   </script>
-  ';
+      ';
 
       $form['kaltura_entry_video_display']['player_width'] = array(
         '#type' => 'textfield',
@@ -112,14 +113,14 @@ function field_kaltura_field_settings($op, $field) {
         '#default_value' => !empty($field['player_height']) ? $field['player_height'] : '330',
       );      
 
-	  $default_cw = variable_get('kaltura_video_entry_cw_type', KalturaSettings_CW_UICONF_ID);
-	  $default_cw = !empty($field['entry_cw']) ? $field['entry_cw'] : $default_cw;
-	  $custom_cw = !empty($field['custom_cw']) ? $field['custom_cw'] : '';
-	  list($regular, $custom) = kaltura_choose_cw('kaltura_video_entry_cw_type', 'kaltura_video_entry_cw_custom', $default_cw);
-	  $form['entry_cw'] = $regular;
-	  $form['custom_cw'] = $custom;
+      $default_cw = variable_get('kaltura_video_entry_cw_type', KalturaSettings_CW_UICONF_ID);
+      $default_cw = !empty($field['entry_cw']) ? $field['entry_cw'] : $default_cw;
+      $custom_cw = !empty($field['custom_cw']) ? $field['custom_cw'] : '';
+      list($regular, $custom) = kaltura_choose_cw('kaltura_video_entry_cw_type', 'kaltura_video_entry_cw_custom', $default_cw);
+      $form['entry_cw'] = $regular;
+      $form['custom_cw'] = $custom;
 
-	  $form['custom_cw']['#default_value'] = $custom_cw;
+      $form['custom_cw']['#default_value'] = $custom_cw;
   
       return $form;
 
@@ -151,7 +152,7 @@ function field_kaltura_field_settings($op, $field) {
   }
 }
 
-/*
+/**
  * Implementation of hook_form_alter().
  */
 function field_kaltura_form_alter(&$form, &$form_state, $form_id) {
@@ -160,7 +161,7 @@ function field_kaltura_form_alter(&$form, &$form_state, $form_id) {
     $form['#field']['multiple'] = "1";
     $form['field']['multiple']['#type'] = 'hidden';
     $form['field']['multiple']['#default_value'] = 0;
-	unset($form['widget']['default_value_fieldset']);
+  unset($form['widget']['default_value_fieldset']);
   }
 }
 
@@ -171,8 +172,8 @@ function field_kaltura_field($op, &$node, $field, &$items, $teaser, $page) {
   switch ($op) {
     case 'view':
     case 'insert' :
-  //  	var_dump($field); var_dump($items);
-    	create_node_kaltura($node, $items, $field['type']);
+  //    var_dump($field); var_dump($items);
+      create_node_kaltura($node, $items, $field['type']);
     case 'validate':
       $allowed_values = content_allowed_values($field);
       if (is_array($items)) {
@@ -199,59 +200,56 @@ function field_kaltura_field($op, &$node, $field, &$items, $teaser, $page) {
   }
 }
 
-
-
-
 /**
  * Make sure there is an entry in the node_kaltura table for mixes that are in fields, so we have a common place to store metadata.
  */
 function create_node_kaltura($node, $items, $type) {
- 	$kaltura_client = KalturaHelpers::getKalturaClient();
-	$session_user = KalturaHelpers::getSessionUser();
-	
-	if ($kaltura_client) {
-		foreach($items as $item) {
-	//		$entries = $item['value'];
-	//var_dump(debug_backtrace());
-			$entries = explode(',', rtrim($item['value'], ','));
- 			foreach ($entries as $entry_id) {
-				//TO DO: CM  - add Kaltura error handling
-				if ($type == 'Kaltura_Media')
-				{
-					$result = $kaltura_client->media->get($entry_id);
-				}
-				else //Mix
-				{
-					$result = $kaltura_client->mixing->get($entry_id);
-				}
-				$node_kaltura->nid = $node->nid;
-				$node_kaltura->vid = $node->vid;
-				$node_kaltura->kaltura_entryId = $result->id;
-				$node_kaltura->kaltura_media_type = $result->type;
-				$node_kaltura->kstatus = $result->status;
-				$node_kaltura->kaltura_thumbnail_url = $result->thumbnailUrl;
-				$node_kaltura->kaltura_duration = $result->duration;
-				$node->kaltura_partner_data= $result->partnerData;
-				$node->kaltura_source= '';
-				$node->kaltura_source_id= '';
-				$node->kaltura_source_link= '';
-				$node->kaltura_width= '';
-				$node->kaltura_height= '';
-				$node->kaltura_download_url= $result->downloadUrl;
-				$node->kaltura_media_date= '';
-				$node->kaltura_views= $result->views;
-				$node->kaltura_plays= $result->plays;
-				$node->kaltura_votes= $result->votes;
-				$node->kaltura_rank= $result->rank;
-				$node->kaltura_total_rank= $result->totalRank;
-				
-				//TO DO: CM
-				//add extras here like node_kaltura module
-				
-				node_field_insert($node_kaltura);
-			}
-	 	}
-	}
+   $kaltura_client = KalturaHelpers::getKalturaClient();
+  $session_user = KalturaHelpers::getSessionUser();
+  
+  if ($kaltura_client) {
+    foreach($items as $item) {
+  //    $entries = $item['value'];
+  //var_dump(debug_backtrace());
+      $entries = explode(',', rtrim($item['value'], ','));
+       foreach ($entries as $entry_id) {
+        //TO DO: CM  - add Kaltura error handling
+        if ($type == 'Kaltura_Media')
+        {
+          $result = $kaltura_client->media->get($entry_id);
+        }
+        else //Mix
+        {
+          $result = $kaltura_client->mixing->get($entry_id);
+        }
+        $node_kaltura->nid = $node->nid;
+        $node_kaltura->vid = $node->vid;
+        $node_kaltura->kaltura_entryId = $result->id;
+        $node_kaltura->kaltura_media_type = $result->type;
+        $node_kaltura->kstatus = $result->status;
+        $node_kaltura->kaltura_thumbnail_url = $result->thumbnailUrl;
+        $node_kaltura->kaltura_duration = $result->duration;
+        $node->kaltura_partner_data= $result->partnerData;
+        $node->kaltura_source= '';
+        $node->kaltura_source_id= '';
+        $node->kaltura_source_link= '';
+        $node->kaltura_width= '';
+        $node->kaltura_height= '';
+        $node->kaltura_download_url= $result->downloadUrl;
+        $node->kaltura_media_date= '';
+        $node->kaltura_views= $result->views;
+        $node->kaltura_plays= $result->plays;
+        $node->kaltura_votes= $result->votes;
+        $node->kaltura_rank= $result->rank;
+        $node->kaltura_total_rank= $result->totalRank;
+        
+        //TO DO: CM
+        //add extras here like node_kaltura module
+        
+        node_field_insert($node_kaltura);
+      }
+     }
+  }
 }
 
 function node_field_insert($node) {
@@ -277,15 +275,15 @@ function kaltura_get_default_display($item, $teaser, $node) {
   
   if (is_array($entries) && count($entries)) {
     foreach ($entries as $entry_id) {
-    	$width = $item['#kaltura_field']['player_width'];
-    	$height = $item['#kaltura_field']['player_height'];
-    	$uiconf = (empty($item['#kaltura_field']['entry_widget']) ? '' : 'uiconf_id="'.$item['#kaltura_field']['entry_widget'].'"');
-    	$dim ="";
+      $width = $item['#kaltura_field']['player_width'];
+      $height = $item['#kaltura_field']['player_height'];
+      $uiconf = (empty($item['#kaltura_field']['entry_widget']) ? '' : 'uiconf_id="'.$item['#kaltura_field']['entry_widget'].'"');
+      $dim ="";
       if (!$entry_id) continue;
       
       if (!empty($width) && !empty($height))
       {
-		$dim = ' width="'.$width.'" height="'.$height.'"';
+    $dim = ' width="'.$width.'" height="'.$height.'"';
       }
      $text = '<div class="field-entry-'. $entry_id .'">[kaltura-widget mix="'. $entry_id .'" size="large" '. $uiconf . $dim.' /]</div>';
 
@@ -304,8 +302,8 @@ function kaltura_get_full_display($item, $teaser, $node) {
   
   if (is_array($entries) && count($entries)) {
     foreach ($entries as $entry_id) {
-    	$width = $item['#kaltura_field']['thumbsize_width'];
-    	$height = $item['#kaltura_field']['thumbsize_height'];
+      $width = $item['#kaltura_field']['thumbsize_width'];
+      $height = $item['#kaltura_field']['thumbsize_height'];
       if (!$entry_id) continue;
       
      $text = '<div class="field-entry-'. $entry_id .'">[kaltura-widget mix="'. $entry_id .'" size="large"  /]</div>';
@@ -358,7 +356,7 @@ function kaltura_get_thumbnail_display($item, $teaser, $field) {
       */
       $kaltura_metadata = katlura_get_metadata_for_mix($entry_id);
       if($kaltura_metadata) {
-      	$all_field .= '<div class="field-entry-'. $entry_id .'">'. theme('node_kaltura_mix_thumbnail_url', $kaltura_metadata, $teaser, FALSE, $size) .'</div>';
+        $all_field .= '<div class="field-entry-'. $entry_id .'">'. theme('node_kaltura_mix_thumbnail_url', $kaltura_metadata, $teaser, FALSE, $size) .'</div>';
       }
     }
   }
@@ -617,11 +615,11 @@ function field_kaltura_textfield_process($element, $edit, $form_state, $form) {
   $custom_name = 'edit-'. str_replace('_', '-', $element['#field_name']) .'-'. $delta .'-'. $field_key;
   $element['data'] = array('#tree' => 'true');
   $ui_conf = !empty($form['#field_info'][$element['#field_name']]['entry_cw']) ?
-							$form['#field_info'][$element['#field_name']]['entry_cw'] : 0;
+              $form['#field_info'][$element['#field_name']]['entry_cw'] : 0;
   
   if ($ui_conf == 1)
   {
-	$ui_conf = $form['#field_info'][$element['#field_name']]['custom_cw'];
+  $ui_conf = $form['#field_info'][$element['#field_name']]['custom_cw'];
   }
   
   $cw_vars = kaltura_format_cw_vars(array(
@@ -713,15 +711,15 @@ function field_kaltura_remix_textfield_process($element, $edit, $form_state, $fo
   //Does this user have access to update the node associated with this entry? If so, it's ok to add it via URL parameter
   
   if (isset($entry_id)) {
-	  $entry_metadata = katlura_get_metadata_for_mix($entry_id);
-	  $entry_access = node_access('update',node_load($entry_metadata->nid));
-	  
-	  //If the user has access to edit this node OR this entry has no node associated with it (and hence no owner)
-	  if($entry_access || !$entry_metadata) {
-		$element['#value'][value] = isset($entry_id) ? $entry_id : NULL;
-	  } else {
-		$entry_id = null;
-	  }
+    $entry_metadata = katlura_get_metadata_for_mix($entry_id);
+    $entry_access = node_access('update',node_load($entry_metadata->nid));
+    
+    //If the user has access to edit this node OR this entry has no node associated with it (and hence no owner)
+    if($entry_access || !$entry_metadata) {
+      $element['#value'][value] = isset($entry_id) ? $entry_id : NULL;
+    } else {
+      $entry_id = null;
+    }
   }
   
   $cw_vars = kaltura_format_cw_vars(array(

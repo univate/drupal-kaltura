@@ -8,7 +8,7 @@
  * A playlist node is a node that has title + reference to View(RSS type)
  * And is rendered as a div of media list + a div of player
  * Each media in the list has a onClick event to InsertMedia into Kaltura KDP
- * 
+ *
  */
 
 drupal_add_js(drupal_get_path('module', 'kaltura') .'/js/kaltura_player_controller.js');
@@ -37,7 +37,7 @@ function kaltura_playlist_access($op, $node, $account) {
       return user_access('edit kaltura playlist', $account);
     case 'delete':
       return user_access('delete kaltura playlist', $account);
-  }  
+  }
 }
 
 /*
@@ -66,14 +66,14 @@ function kaltura_playlist_settings_form() {
     '#type' => 'item',
     '#value' => '<div class="clear-block"></div>',
   );
-  
+
   $form['kaltura_viewplaylist_entry_delivery_type'] = array(
     '#type' => 'select',
     '#title' => t('Delivery Type'),
     '#options' => array( 'HTTP' => 'Progressive Download (HTTP)', 'RTMP' => 'Adaptive Streaming (RTMP)'),
     '#default_value' => variable_get('kaltura_viewplaylist_entry_delivery_type', 'HTTP'),
   );
-  
+
   $form['kaltura_viewplaylist_entry_width'] = array(
     '#type' => 'textfield',
     '#size' => 5,
@@ -94,7 +94,7 @@ function kaltura_playlist_settings_form() {
     ),
     '#title' => t('Player AutoNext behavior'),
     '#default_value' => variable_get('kaltura_viewplaylist_autonext', 1),
-  ); 
+  );
   return system_settings_form($form);
 }
 
@@ -117,10 +117,10 @@ function kaltura_playlist_node_info() {
 function kaltura_playlist_form(&$node, &$param) {
   $type = node_get_types('type', $node);
   $form['title'] = array(
-    '#type' => 'textfield', 
-    '#title' => check_plain($type->title_label), 
-    '#required' => TRUE, 
-    '#default_value' => $node->title, 
+    '#type' => 'textfield',
+    '#title' => check_plain($type->title_label),
+    '#required' => TRUE,
+    '#default_value' => $node->title,
     '#weight' => -5
   );
   $available_views = kaltura_get_relevant_views();
@@ -129,22 +129,22 @@ function kaltura_playlist_form(&$node, &$param) {
   $js_script = '<script type="text/javascript">
   function change_view(val)
   {
-	switch(val)
-	{';
+  switch(val)
+  {';
   foreach ($tags_views as $name => $val)
   {
-	$js_script .= 'case "'.$name.'":
-	';
+  $js_script .= 'case "'.$name.'":
+  ';
   }
-	$js_script .= 'document.getElementById("edit-tag-filter").style.display="inline"; break;
-	default: document.getElementById("edit-tag-filter").style.display="none"; break;
-	}
+  $js_script .= 'document.getElementById("edit-tag-filter").style.display="inline"; break;
+  default: document.getElementById("edit-tag-filter").style.display="none"; break;
+  }
   }
   </script>';
   $ops = array("=" => "Is equal to","!=" => "Is not equal to","contains" => "Contains",
-			  "word" => "Contains any word","allwords" => "Contains all words","starts" => "Starts with",
-			  "not_starts" => "Does not start with", "ends" => "Ends with","not_ends" => "Does not end with",
-			  "not" => "Does not contain");
+        "word" => "Contains any word","allwords" => "Contains all words","starts" => "Starts with",
+        "not_starts" => "Does not start with", "ends" => "Ends with","not_ends" => "Does not end with",
+        "not" => "Does not contain");
 
   $form['playlist_view'] = array(
     '#type' => 'select',
@@ -154,26 +154,26 @@ function kaltura_playlist_form(&$node, &$param) {
     '#required' => TRUE,
     '#prefix' => $js_script,
     '#attributes' => array('onChange' => 'change_view(this.options[this.selectedIndex].value)'),
-    '#default_value' => $node->playlist_view,    
+    '#default_value' => $node->playlist_view,
   );
-  
+
   $form['tag_filter_operator'] = array(
-    '#type' => 'select', 
-    '#title' => t('Tag operator'), 
+    '#type' => 'select',
+    '#title' => t('Tag operator'),
     '#description' => t('* "Is equal to" operator works only on a single tag, if using multiple tags on the same node should use "Contains"'),
-   '#default_value' => empty($node->tag_filter_operator) ? "contains" : $node->tag_filter_operator, 
+   '#default_value' => empty($node->tag_filter_operator) ? "contains" : $node->tag_filter_operator,
     '#options' => $ops,
   );
-    
+
   $form['tag_filter'] = array(
-    '#type' => 'textfield', 
-    '#title' => t('Tag value'), 
+    '#type' => 'textfield',
+    '#title' => t('Tag value'),
     '#description' => t('Tag specified for all entries'),
-   '#default_value' => $node->tag_filter, 
+   '#default_value' => $node->tag_filter,
     '#size' => '30',
   );
-  
-  
+
+
   return $form;
 }
 
@@ -205,7 +205,7 @@ function kaltura_get_tag_filter_views()
     foreach ($view->display as $display) {
       if ($display->display_plugin == 'default') {
         if (!empty($display->display_options['filters']['kaltura_tags']) &&
-			$display->display_options['filters']['kaltura_tags']['exposed'] == 1) 
+      $display->display_options['filters']['kaltura_tags']['exposed'] == 1)
           $relevant_views[$view->name .'|'. $display->id] = $view_name;
       }
     }
@@ -222,7 +222,7 @@ function kaltura_playlist_theme() {
       'arguments' => array('element' => NULL),
     ),
   );
-  
+
   return $themes;
 }
 
@@ -231,8 +231,8 @@ function kaltura_playlist_theme() {
  */
 function kaltura_playlist_insert(&$node) {
   watchdog('playlist', 'node created '. print_r($node, TRUE));
-  $sql = 'INSERT INTO {node_kaltura_playlist} (vid, nid, playlist_view, tag_filter_operator, tag_filter) 
-			VALUES(%d, %d, \'%s\', \'%s\', \'%s\' )';
+  $sql = 'INSERT INTO {node_kaltura_playlist} (vid, nid, playlist_view, tag_filter_operator, tag_filter)
+      VALUES(%d, %d, \'%s\', \'%s\', \'%s\' )';
   db_query($sql, $node->vid, $node->nid, $node->playlist_view, $node->tag_filter_operator, $node->tag_filter);
 }
 
@@ -264,7 +264,7 @@ function kaltura_playlist_load($node) {
   $sql = 'SELECT playlist_view,tag_filter_operator,tag_filter FROM {node_kaltura_playlist} WHERE vid = %d';
   $result = db_query($sql, $node->vid);
   $additions = db_fetch_object($result);
-  return $additions;  
+  return $additions;
 }
 
 /**
@@ -341,9 +341,9 @@ function kaltura_get_view_raw_data($view_details, $tag_filter = '', $tag_filter_
     }
     if (!empty($view->display['default']->display_options['filters']['kaltura_tags']))
     {
-		$view->display['default']->display_options['filters']['kaltura_tags']['value'] = $tag_filter;
-		$view->display['default']->display_options['filters']['kaltura_tags']['operator'] = $tag_filter_op;
-	}
+    $view->display['default']->display_options['filters']['kaltura_tags']['value'] = $tag_filter;
+    $view->display['default']->display_options['filters']['kaltura_tags']['operator'] = $tag_filter_op;
+  }
     $view->display['default']->display_options['filters']['kaltura_media_type_1'] = array(
       'operator' => 'not in',
       'value' => array(
@@ -428,17 +428,17 @@ function kaltura_format_known_fields($attr, $value) {
       }
       break;
     case 'node_kaltura_kaltura_plays':
-	  $return = "Plays: " . $value;
-	  break;
+    $return = "Plays: " . $value;
+    break;
     case 'node_kaltura_kaltura_tags':
-	  $return = "Tags: " . $value;
-	  break;
+    $return = "Tags: " . $value;
+    break;
     case 'node_kaltura_kaltura_rank':
-	  $return = "Rank: " . $value;
-	  break;
+    $return = "Rank: " . $value;
+    break;
      case 'node_kaltura_kaltura_admin_tags':
-	  $return = "Categories: " . $value;
-	  break;
+    $return = "Categories: " . $value;
+    break;
    default:
       $return = $value;
   }
@@ -459,7 +459,7 @@ function kaltura_playlist_invoke($hook) {
   array_shift($args); // remove $hook
   $hook = 'kaltura_playlist_'. $hook;
   $return = module_invoke_all($hook, $args);
-  return $return;  
+  return $return;
 }
 
 function kaltura_nodes2html($nodes, $fields) {
@@ -485,7 +485,7 @@ function kaltura_prepare_js_code($div_id, $first_entry, $autonext, $node_count) 
   var mykdp = new KalturaPlayerController(\'kaltura_playlist_module\');
   mykdp.currentEntryId = "'. $first_entry->node_kaltura_kaltura_entryId .'";
   $("#'. $first_entry->node_kaltura_kaltura_entryId .'").addClass("playing");
-  
+
   var myplaylist = Array();
   function test() { alert("test"); }
   function fill_playlist(div_id) {
@@ -495,26 +495,26 @@ function kaltura_prepare_js_code($div_id, $first_entry, $autonext, $node_count) 
   ';
   if ($node_count >= 4) {
     $javascript .= '
-    $("div#'. $div_id .'").scrollable({ 
-      items:\'div.clips\', 
-      vertical:true, 
-      size:4, 
-      next:\'a.down\', 
-      prev:\'a.up\' 
+    $("div#'. $div_id .'").scrollable({
+      items:\'div.clips\',
+      vertical:true,
+      size:4,
+      next:\'a.down\',
+      prev:\'a.up\'
     });
     ';
   }
   $javascript .= '
   $("div.clips").height($("div.clips").height()+2);
-  
+
   function replace_media(entry_id){
     $("#"+mykdp.currentEntryId).removeClass("playing");
-    mykdp.insertEntry(entry_id,true); 
+    mykdp.insertEntry(entry_id,true);
     $("#"+mykdp.currentEntryId).addClass("playing");
   }
   function next_playlist_item()
   {
-	auto_scroll_playlist();
+  auto_scroll_playlist();
   }
   function prev_playlist_item()
   {
@@ -527,9 +527,9 @@ function kaltura_prepare_js_code($div_id, $first_entry, $autonext, $node_count) 
       }
       $("#"+next_id).click();
   }
-  
+
   ';
-  
+
   if ($autonext == 1) {
     $javascript .= 'function auto_scroll_playlist() {
       current_entry = mykdp.currentEntryId;

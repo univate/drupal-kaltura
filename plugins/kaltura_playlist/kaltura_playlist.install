@@ -1,12 +1,11 @@
 <?php
 // $Id: kaltura_playlist.install,v 1.0 $
 
-/*
+/**
  * @file
  * Installation process for kaltura playlist module
  *
  */
-
 
 /**
  * Implementation of hook_schema().
@@ -63,10 +62,10 @@ function kaltura_playlist_schema() {
 function kaltura_playlist_update_2() {
   $ret = array();
 
-	db_add_field($ret, 'node_kaltura_playlist', 'tag_filter_operator', array('type' => 'varchar', 'length' => '50', 'default' => '', 'not null' => TRUE));
-	db_add_field($ret, 'node_kaltura_playlist', 'tag_filter', array('type' => 'varchar', 'length' => '255', 'default' => '', 'not null' => TRUE));
-	
-	return $ret;
+  db_add_field($ret, 'node_kaltura_playlist', 'tag_filter_operator', array('type' => 'varchar', 'length' => '50', 'default' => '', 'not null' => TRUE));
+  db_add_field($ret, 'node_kaltura_playlist', 'tag_filter', array('type' => 'varchar', 'length' => '255', 'default' => '', 'not null' => TRUE));
+
+  return $ret;
 }
 
 /**
@@ -79,7 +78,7 @@ function kaltura_playlist_install() {
 
 function kaltura_populate_nodes() {
   if (!module_exists('views')) return;
-  
+
   include_once('kaltura_playlist.module');
   // get views with _get_relevant_views()
   $views = kaltura_get_relevant_views();
