@@ -152,6 +152,16 @@ function kaltura_menu() {
     'type' => MENU_CALLBACK
   );
 
+  $items['kaltura/ahah/sample_widget'] = array(
+    'title' => 'Sample Widget',
+    'file' => 'includes/kaltura.widget.inc',
+    'description' => 'Display widget',
+    'page callback' => 'kaltura_sample_widget',
+    'page arguments' => array(3),
+    'type' => MENU_CALLBACK,
+    'access callback' => TRUE,
+  );
+
   // maybe variable check here and don't create the handler on unless
   // enabled
   $items['crossdomain.xml'] = array(
@@ -665,20 +675,11 @@ function kaltura_choose_player($as_single_form, $type, $node_type, $return_widge
       '#value' => t('Select which player you want to use in default view for kaltura items'),
     );
   }
-
-  if ($node_type == 'entry') {
-    $variable_width = variable_get('kaltura_'. $type .'_'. $node_type .'_width', '410');
-    $variable_height = variable_get('kaltura_'. $type .'_'. $node_type .'_height', '364');
-  }
-  else {
-    $variable_width = variable_get('kaltura_'. $type .'_width', '410');
-    $variable_height = variable_get('kaltura_'. $type .'_height', '364');
-  }
-  $wid = '_'. variable_get('kaltura_partner_id', '');
+  
+  $form['node_type'] = array('#type' => 'hidden', '#value' => $node_type);
   if (!is_numeric($saved_player)) {
     $saved_player = 48501;
   }
-  //  $saved_player = variable_get('kaltura_'.$type.'_'.$node_type.'_widget', KalturaSettings_DEFAULT_VIDEO_PLAYER_UICONF);
 
   $site_players = array();
   if ( $type == 'viewplaylist') {
@@ -688,75 +689,34 @@ function kaltura_choose_player($as_single_form, $type, $node_type, $return_widge
     KalturaHelpers::getSitePlayers($site_players);
   }
   reset($site_players);
-  $first_uiconf = key($site_players);
+
   $players_name = array();
   foreach ($site_players as $one_player_id => $one_layer_props) {
     $players_name[$one_player_id] = $one_layer_props['name'];
   }
 
-  $replace_url = KalturaHelpers::getSwfUrlForWidget($wid  .'/entry_id/_KMCLOGO1/uiconf_id/##uiconf##');
-  $suffix = '<table><tr><td><span id="'. $type .'_ph"></span></td><td valign="middle"><span><a href="http://www.kaltura.com/index.php/kmc/kmc2#appstudio|players_list" target="_blank">Create new player</a></span></td></tr></table>
-        <script type="text/javascript">
-        function get_'. $type .'_defualt_width()
-        {
-        return "' . $variable_width . '";
-        }
-
-        function get_'. $type .'_defualt_height()
-        {
-        return "' . $variable_height . '";
-        }
-
-        function get_'. $type .'_player_width(uiconf)
-        {
-        var width;
-        switch (uiconf)
-        {';
-          foreach ($site_players as $one_player_id => $one_layer_props) {
-            $suffix .= '
-          case "' . $one_player_id . '": width = "' . $one_layer_props['width'] . '"; break;';
-          }
-          $suffix .= '
-          default: width =  "0";
-        }
-        return (width != "0" ? width : get_'. $type .'_defualt_width());
-        }
-
-        function get_'. $type .'_player_height(uiconf)
-        {
-        var height;
-        switch (uiconf)
-        {';
-          foreach ($site_players as $one_player_id => $one_layer_props) {
-            $suffix .= '
-          case "' . $one_player_id . '": height = "' . $one_layer_props['height'] . '"; break;';
-          }
-          $suffix .= '
-          default: height = "0"; break;
-        }
-        return (height != "0" ? height : get_'. $type .'_defualt_height());
-        }
-
-        function change_'. $type .'_player(uiconf, change_dim)
-        {
-        var url = "'. $replace_url . '";
-        url=url.replace("##uiconf##", uiconf);
-              var kaltura_swf = new SWFObject(url, "'. $type .'_ph_player", get_'. $type .'_player_width(uiconf), get_'. $type .'_player_height(uiconf), "9", "#000000");
-              kaltura_swf.addParam("wmode", "opaque");
-              kaltura_swf.addParam("flashVars", "");
-              kaltura_swf.addParam("allowScriptAccess", "always");
-              kaltura_swf.addParam("allowFullScreen", "TRUE");
-              kaltura_swf.addParam("allowNetworking", "all");
-              kaltura_swf.write("'. $type .'_ph");
-              try{if (change_dim == 1) set_'. $type .'_player_dimension(uiconf);}catch(ex){}
-              }$(document).ready(function() {try{change_'. $type .'_player("'. $saved_player .'", 0);}catch(ex){}});</script>';
-  $form['default_widget'] = array(
+  $form['default_widget']['default_widget_'. $type] = array(
     '#type' => 'select',
     '#title' => t('Video Player for Node'),
     '#options' => $players_name,
-    '#suffix' => $suffix,
-    '#attributes' => array('onChange' => 'change_'. $type .'_player(this.options[this.selectedIndex].value, 1)'),
     '#default_value' => $saved_player,
+    '#ahah' => array(
+      'event' => 'change',
+      'path' => 'kaltura/ahah/sample_widget/'. $type,
+      'wrapper' => 'kaltura_sample_widget_wrapper_'. $type,
+      'method' => 'append',
+      'effect' => 'fade',
+      'progress' => array(
+        'type' => 'throbber',
+      ),
+
+    )
+  );
+  $form['default_widget']['sample_widget'] = array(
+    '#value' => '<div id="kaltura_sample_widget_wrapper_'. $type .'"></div>',
+  );
+  $form['default_widget']['create_new_widget'] = array(
+    '#value' => l('Create new player', 'http://www.kaltura.com/index.php/kmc/kmc2#appstudio|players_list', array('attributes' => array('target' => '_blank'))),
   );
   if ($as_single_form) {
     return system_settings_form($form);
@@ -765,6 +725,8 @@ function kaltura_choose_player($as_single_form, $type, $node_type, $return_widge
     return $form;
   }
 
+  // @todo: what is this below, it will never execute as the the method will
+  //        always return above.
   $widgets = new KalturaSettings;
   $pid = variable_get('kaltura_partner_id', '');
 
