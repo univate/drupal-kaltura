@@ -46,7 +46,7 @@ function node_kaltura_mix_menu() {
     'title' => 'Media Remix Settings',
     'description' => 'Administer the kaltura mix module.',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array( 'kaltura_mix_settings_form' ),
+    'page arguments' => array('kaltura_mix_settings_form'),
     'access arguments' => array('administer kaltura'),
     'type' => MENU_NORMAL_ITEM,
     'weight' => -6,
@@ -71,6 +71,7 @@ function node_kaltura_mix_menu() {
  * currently - the only settings are the taxonomy vocabularies corresponding to tags and admin tags of kaltura item
  */
 function kaltura_mix_settings_form() {
+  _kaltura_init();
   $form['entry_wizards'] = array(
     '#type' => 'fieldset',
     '#title' => t('Wizards'),
@@ -622,6 +623,7 @@ function kaltura_clone_mix_confirm_submit($form, &$form_state) {
 
 
 function kaltura_clone_mix() {
+  _kaltura_init();
   $op = arg(2);
   $content_type = arg(3);
   $entry_id = arg(2);

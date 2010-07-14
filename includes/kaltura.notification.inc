@@ -20,6 +20,7 @@
  * notification is received will be able to do so.
  */
 function kaltura_notification_handler() {
+  _kaltura_init();
   $admin_secret = variable_get('kaltura_admin_secret', '');
   //$params = $_REQUEST;
   $params = $_POST;

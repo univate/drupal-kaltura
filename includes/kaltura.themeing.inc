@@ -239,6 +239,7 @@ function kaltura_get_params_from_tag($tag) {
  *   title
  */
 function kaltura_contribution_wizard() {
+  _kaltura_init();
   global $user;
   $args = func_get_args();
   $temp_args = unserialize(urldecode($args[0]));
@@ -668,6 +669,7 @@ function theme_contribution_wizard_field($theme_params, $field_id, $no_collect_e
  * callback function for kaltura/simple_editor
  */
 function kaltura_simple_editor() {
+  _kaltura_init();
   $args = func_get_args();
   $kshow_id = $args[0];
   $type = $args[1];
@@ -761,6 +763,7 @@ function theme_simple_editor($theme_params, $no_refresh) {
  * callback function for kaltura/advanced_editor
  */
 function kaltura_advanced_editor() {
+  _kaltura_init();
   $args = func_get_args();
   $kshow_id = $args[0];
   $type = $args[1];
@@ -882,6 +885,7 @@ function theme_kaltura_modal($theme_params) {
  * might be useful for the "kaltura_inline" implementation
  */
 function kaltura_insert_widget() {
+  _kaltura_init();
   global $_kaltura_thumbnail_base_url;
   $args = func_get_args();
   $entry_list = $args[0];
@@ -929,6 +933,7 @@ function kaltura_insert_widget() {
  * returns an array of embed options later injected into the embed tag
  */
 function kaltura_get_embed_options($params) {
+  _kaltura_init();
   switch ($params["align"]) {
     case 'r':
       $align = "right";

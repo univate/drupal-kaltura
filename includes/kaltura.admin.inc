@@ -13,6 +13,7 @@
  * returns HTML with links to all configuration pages of the module
  */
 function kaltura_settings_main() {
+  _kaltura_init();
   $items = array();
   $items[] = l('Server Integration settings', 'admin/settings/kaltura/general');
   if (module_exists('node_kaltura_entry')) {
@@ -262,6 +263,7 @@ function kaltura_create_widgets_for_partner($partner_id, $secret) {
  *
  */
 function kaltura_settings_form() {
+  _kaltura_init();
   global $base_url;
   if (variable_get('kaltura_partner_id', '') != '') {
     $notification_settings = kaltura_notifications_settings_form();
@@ -693,6 +695,7 @@ function kaltura_form_alter(&$form, &$form_state, $form_id) {
  * this may need some reworking
  */
 function kaltura_import_entries_page() {
+  _kaltura_init();
   // initialise variables
   $found_flag = TRUE;       // set to FALSE if there are no entries
   $enabled_flag = FALSE;     // set to TRUE if mix or media node is enabled

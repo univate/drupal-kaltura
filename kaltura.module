@@ -11,35 +11,9 @@
  * load kaltura stuff
  */
 function kaltura_init() {
-  $GLOBALS['_kaltura_client_folder'] = drupal_get_path('module', 'kaltura') .'/kaltura_client/';
-
-  module_load_include('php', 'kaltura', 'kaltura_client/KalturaClient');
-  module_load_include('php', 'kaltura', 'kaltura_client/kaltura_logger');
-  module_load_include('php', 'kaltura', 'kaltura_client/kaltura_settings');
-  module_load_include('php', 'kaltura', 'kaltura_client/kaltura_helpers');
-  module_load_include('php', 'kaltura', 'kaltura_client/kaltura_notification_client');
-
-  drupal_add_css(drupal_get_path("module", "kaltura") ."/style/kaltura.css");
-  drupal_add_js(drupal_get_path("module", "kaltura") ."/js/kaltura.js");
-  drupal_add_js(drupal_get_path("module", "kaltura") ."/js/swfobject.js");
-
-  if (variable_get('kaltura_partner_id', '') != '') {
-    $server_url = (variable_get('kaltura_server_url', '') != '')? variable_get('kaltura_server_url', ''): KalturaSettings_SERVER_URL;
-    $GLOBALS['_kaltura_thumbnail_base_url'] = $server_url .'/p/'. variable_get('kaltura_partner_id', '') .'/sp/'. variable_get('kaltura_subp_id', '') .'/thumbnail';
-  }
-
-  $editor_type = variable_get('kaltura_mix_roughcut_editor_type', KalturaSettings_DEFAULT_EDITOR);
-
-  if ($editor_type == 'Advanced_Editor' || $editor_type == KalturaSettings_AE_CUSTOM || $editor_type == KalturaSettings_AE_UICONF_ID) {
-    variable_set('kaltura_editor_width', KalturaSettings_AE_WIDTH);
-    variable_set('kaltura_editor_height', KalturaSettings_AE_HEIGHT);
-    variable_set('kaltura_editor_URL', KalturaSettings_AE_URL);
-  }
-  else {
-    variable_set('kaltura_editor_width', KalturaSettings_SE_WIDTH);
-    variable_set('kaltura_editor_height', KalturaSettings_SE_HEIGHT);
-    variable_set('kaltura_editor_URL', KalturaSettings_SE_URL);
-  }
+  // Module should be smarter about loading only what is actually required so
+  // there is a new function that functions need to call to load everything:
+  // _kaltura_init();
 }
 
 /*
@@ -118,6 +92,7 @@ function kaltura_menu() {
 
   $items['kaltura/contribution_wizard/%'] = array(
     'title' => 'Contribution Wizard',
+    'file' => 'includes/kaltura.themeing.inc',
     'page callback' => 'kaltura_contribution_wizard',
     'page arguments' => array(2),
     'access arguments' => array('access kaltura widgets'),
@@ -126,6 +101,7 @@ function kaltura_menu() {
 
   $items['kaltura/simple_editor'] = array(
     'title' => 'Simple Editor',
+    'file' => 'includes/kaltura.themeing.inc',
     'page callback' => 'kaltura_simple_editor',
     'access arguments' => array('access kaltura widgets'),
     'type' => MENU_CALLBACK
@@ -133,6 +109,7 @@ function kaltura_menu() {
 
   $items['kaltura/advanced_editor'] = array(
     'title' => 'Advanced Editor',
+    'file' => 'includes/kaltura.themeing.inc',
     'page callback' => 'kaltura_advanced_editor',
     'access arguments' => array('access kaltura widgets'),
     'type' => MENU_CALLBACK
@@ -140,6 +117,7 @@ function kaltura_menu() {
 
   $items['kaltura/insert_widget'] = array(
     'title' => 'Please Wait...',
+    'file' => 'includes/kaltura.themeing.inc',
     'page callback' => 'kaltura_insert_widget',
     'access callback' => TRUE,
     'type' => MENU_CALLBACK
@@ -216,6 +194,47 @@ function kaltura_theme() {
   return $themes;
 }
 
+/**
+ * Initialize kaltura.
+ */
+function _kaltura_init() {
+  static $initialized;
+
+  if (!isset($initialized)) {
+    $GLOBALS['_kaltura_client_folder'] = drupal_get_path('module', 'kaltura') .'/kaltura_client/';
+
+    module_load_include('php', 'kaltura', 'kaltura_client/KalturaClient');
+    module_load_include('php', 'kaltura', 'kaltura_client/kaltura_logger');
+    module_load_include('php', 'kaltura', 'kaltura_client/kaltura_settings');
+    module_load_include('php', 'kaltura', 'kaltura_client/kaltura_helpers');
+    module_load_include('php', 'kaltura', 'kaltura_client/kaltura_notification_client');
+
+    drupal_add_css(drupal_get_path("module", "kaltura") ."/style/kaltura.css");
+    drupal_add_js(drupal_get_path("module", "kaltura") ."/js/kaltura.js");
+    drupal_add_js(drupal_get_path("module", "kaltura") ."/js/swfobject.js");
+
+    if (variable_get('kaltura_partner_id', '') != '') {
+      $server_url = (variable_get('kaltura_server_url', '') != '')? variable_get('kaltura_server_url', ''): KalturaSettings_SERVER_URL;
+      $GLOBALS['_kaltura_thumbnail_base_url'] = $server_url .'/p/'. variable_get('kaltura_partner_id', '') .'/sp/'. variable_get('kaltura_subp_id', '') .'/thumbnail';
+    }
+
+    $editor_type = variable_get('kaltura_mix_roughcut_editor_type', KalturaSettings_DEFAULT_EDITOR);
+
+    // @todo: a variable_set() results in a db INSERT or UPDATE, so every page
+    //        load we are doing an extra 6 db requests that are not needed
+    if ($editor_type == 'Advanced_Editor' || $editor_type == KalturaSettings_AE_CUSTOM || $editor_type == KalturaSettings_AE_UICONF_ID) {
+      variable_set('kaltura_editor_width', KalturaSettings_AE_WIDTH);
+      variable_set('kaltura_editor_height', KalturaSettings_AE_HEIGHT);
+      variable_set('kaltura_editor_URL', KalturaSettings_AE_URL);
+    }
+    else {
+      variable_set('kaltura_editor_width', KalturaSettings_SE_WIDTH);
+      variable_set('kaltura_editor_height', KalturaSettings_SE_HEIGHT);
+      variable_set('kaltura_editor_URL', KalturaSettings_SE_URL);
+    }
+  }
+}
+
 /*
  * Implementation of module_invoke().
  *
@@ -264,8 +283,10 @@ function kaltura_build_search() {
  * All we do here is to alter the body and teaser fields when a node goes to view mode
  * we call our functions to replcae the special "tags", which we create in theme_node_kaltura_*_entryId(), with the embed tag
  *
+ * @todo: do we really need to perform this on every node.
  */
 function kaltura_nodeapi(&$node, $op, $teaser) {
+  module_load_include('inc', 'kaltura', 'includes/kaltura.themeing');
   $node_update_access = node_access('update', $node);
   $show_embed = user_access('view Kaltura embed code');
   switch ($op) {
@@ -285,7 +306,7 @@ function kaltura_nodeapi(&$node, $op, $teaser) {
 }
 
 /*
- * This function determines in which playedr widget we need to use
+ * This function determines in which player widget we need to use
  *
  * The function exposes a hook "hook_use_uiconf" so other modules can change the widget if they wish to.
  *
@@ -359,6 +380,7 @@ function kaltura_default_uiconf_by_type($media_type) {
  * callback function for the kaltura/entries URL
  */
 function kaltura_list_entries() {
+  _kaltura_init();
   global $pager_page_array, $pager_total;
   $args = func_get_args();
   if ($args[0] == 'allow-insert' && $args[1]) {
@@ -665,6 +687,7 @@ function kaltura_choose_cw($cw_var, $cw_custom, $override_cw = 0) {
  * define the settings form for choosing a default player
  */
 function kaltura_choose_player($as_single_form, $type, $node_type, $return_widget_html = FALSE, $saved_player=48501) {
+  _kaltura_init();
   global $base_path;
   if (variable_get('kaltura_partner_id', '') == '') {
     drupal_set_message(t('You must configure partner\'s details first.'), 'error');
@@ -675,7 +698,7 @@ function kaltura_choose_player($as_single_form, $type, $node_type, $return_widge
       '#value' => t('Select which player you want to use in default view for kaltura items'),
     );
   }
-  
+
   $form['node_type'] = array('#type' => 'hidden', '#value' => $node_type);
   if (!is_numeric($saved_player)) {
     $saved_player = 48501;
@@ -725,7 +748,7 @@ function kaltura_choose_player($as_single_form, $type, $node_type, $return_widge
     return $form;
   }
 
-  // @todo: what is this below, it will never execute as the the method will
+  // @todo: what is this below, it will never execute as the the function will
   //        always return above.
   $widgets = new KalturaSettings;
   $pid = variable_get('kaltura_partner_id', '');
@@ -768,11 +791,6 @@ function kaltura_cw_destination() {
   $url = url('kaltura/entries');
   return $url;
 }
-
-/*
- * include another file with mostly theme'ing functions
- */
-include_once('includes/kaltura.themeing.inc');
 
 /*
  * Implementation of hook_block().

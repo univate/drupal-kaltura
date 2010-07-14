@@ -57,6 +57,7 @@ function kaltura_comments_menu() {
  * kaltura video comments module settings form
  */
 function kaltura_vc_settings_form() {
+  _kaltura_init();
   $form['kaltura_comment_display'] = array(
     '#type' => 'fieldset',
     '#title' => t('Display settings'),

@@ -9,6 +9,7 @@
  * Load a sample of the widget via AHAH.
  */
 function kaltura_sample_widget($type) {
+  _kaltura_init();
   $wid = '_'. variable_get('kaltura_partner_id', '');
   $node_type = $_POST['node_type'];
   if ($node_type == 'entry') {

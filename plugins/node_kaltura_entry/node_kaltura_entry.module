@@ -58,6 +58,7 @@ function node_kaltura_entry_menu() {
  * currently - the only settings are the taxonomy vocabularies corresponding to tags and admin tags of kaltura item
  */
 function kaltura_entry_settings_form() {
+  _kaltura_init();
   global $base_path;
 
   $form['entry_wizards'] = array(

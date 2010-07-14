@@ -58,6 +58,7 @@ function kaltura_playlist_menu() {
 }
 
 function kaltura_playlist_settings_form() {
+  _kaltura_init();
   $saved_player = variable_get('kaltura_viewplaylist_entry_widget', KalturaSettings_DEFAULT_VIEWPLAYLIST_PLAYER_UICONF);
   $players = kaltura_choose_player(0, 'viewplaylist', 'entry', FALSE, $saved_player);
   $form['kaltura_viewplaylist_entry_widget'] = $players['default_widget'];
