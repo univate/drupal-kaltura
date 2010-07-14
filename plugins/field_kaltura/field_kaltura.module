@@ -88,22 +88,10 @@ function field_kaltura_field_settings($op, $field) {
 
       $form['kaltura_entry_video_display']['entry_widget'] = $players['default_widget'];
       $form['kaltura_entry_video_display']['entry_widget']['#default_value'] = $saved_player;
-
-      $dynamic_dimension_js = '
-  <script type="text/javascript">
-  function set_video_player_dimension(uiconf)
-  {
-  document.getElementById("edit-player-height").value=get_video_player_height(uiconf);
-  document.getElementById("edit-player-width").value=get_video_player_width(uiconf);
-  }
-  </script>
-      ';
-
       $form['kaltura_entry_video_display']['player_width'] = array(
         '#type' => 'textfield',
         '#title' => t('Player Width'),
         '#size' => 5,
-        '#prefix' => $dynamic_dimension_js,
         '#default_value' => !empty($field['player_width']) ? $field['player_width'] : '400',
       );
 

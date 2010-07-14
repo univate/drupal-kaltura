@@ -113,22 +113,13 @@ function kaltura_entry_settings_form() {
     '#collapsed' => TRUE,
     '#weight' => -4,
   );
-  $dynamic_dimension_js = '
-  <script type="text/javascript">
-  function set_video_player_dimension(uiconf)
-  {
-  document.getElementById("edit-kaltura-video-entry-height").value=get_video_player_height(uiconf);
-  document.getElementById("edit-kaltura-video-entry-width").value=get_video_player_width(uiconf);
-  }
-  </script>
-  ';
   $saved_player = variable_get('kaltura_video_entry_widget', KalturaSettings_DEFAULT_VIDEO_PLAYER_UICONF);
   $players = kaltura_choose_player(0, 'video', 'entry', FALSE, $saved_player);
   $form['kaltura_entry_video_display']['kaltura_video_entry_widget'] = $players['default_widget'];
   $form['kaltura_entry_video_display']['kaltura_video_entry_widget']['#default_value'] = $saved_player;
   $form['kaltura_entry_video_display']['clear_block_item'] = array(
     '#type' => 'item',
-    '#value' => $dynamic_dimension_js . '<div class="clear-block"></div>',
+    '#value' => '<div class="clear-block"></div>',
   );
   $form['kaltura_entry_video_display']['kaltura_video_entry_delivery_type'] = array(
     '#type' => 'select',
