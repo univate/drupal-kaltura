@@ -532,6 +532,7 @@ function kaltura_cron() {
  * returns an array made up of Mix and media entries
  */
 function kaltura_get_entries($entries, $totalEntries, $isAdmin = FALSE) {
+  _kaltura_init();
   $kaltura_client = KalturaHelpers::getKalturaClient($isAdmin);
   $session_user = KalturaHelpers::getSessionUser();
   $kmf = new KalturaBaseEntryFilter();
