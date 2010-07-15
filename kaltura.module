@@ -130,12 +130,21 @@ function kaltura_menu() {
     'type' => MENU_CALLBACK
   );
 
-  $items['kaltura/ahah/sample_widget'] = array(
+  $items['kaltura/ahah/sample_widget/%'] = array(
     'title' => 'Sample Widget',
     'file' => 'includes/kaltura.widget.inc',
     'description' => 'Display widget',
-    'page callback' => 'kaltura_sample_widget',
+    'page callback' => 'kaltura_sample_widget_ahah',
     'page arguments' => array(3),
+    'type' => MENU_CALLBACK,
+    'access callback' => TRUE,
+  );
+  $items['kaltura/ahah/uploader_type/%/%'] = array(
+    'title' => 'Uploader Type',
+    'file' => 'includes/kaltura.widget.inc',
+    'description' => 'Display uploader type',
+    'page callback' => 'kaltura_uploader_type_ahah',
+    'page arguments' => array(3, 4),
     'type' => MENU_CALLBACK,
     'access callback' => TRUE,
   );
@@ -631,56 +640,48 @@ function kaltura_choose_cw($cw_var, $cw_custom, $override_cw = 0) {
     $default_cw = $override_cw;
   }
 
+  // @todo: return_array? this should be a form and set a key
   $return_array[] = array(
     '#type' => 'select',
     '#title' => t('Uploader Type'),
-    '#options' => array( KalturaSettings_CW_UICONF_ID_VIDEO => 'Video', KalturaSettings_CW_UICONF_ID_IMAGE => 'Image', KalturaSettings_CW_UICONF_ID_AUDIO => 'Audio', KalturaSettings_CW_UICONF_ID => 'All',/* KalturaSettings_CW_UICONF_ID_SIMPLE => 'Simple', */ '1' => 'Custom'),
-    '#attributes' => array('onChange' => 'change_cw(this.options[this.selectedIndex].value)'),
+    '#options' => array(
+      KalturaSettings_CW_UICONF_ID_VIDEO => 'Video',
+      KalturaSettings_CW_UICONF_ID_IMAGE => 'Image',
+      KalturaSettings_CW_UICONF_ID_AUDIO => 'Audio',
+      KalturaSettings_CW_UICONF_ID => 'All',
+     // KalturaSettings_CW_UICONF_ID_SIMPLE => 'Simple',
+     '1' => 'Custom'
+    ),
     '#suffix' => '<div id="entry_image"></div>',
     '#default_value' => $default_cw,
+    '#ahah' => array(
+      'event' => 'change',
+      'path' => 'kaltura/ahah/uploader_type/'. $cw_var .'/'. $cw_custom,
+      'wrapper' => 'uploader_wrapper',
+      'method' => 'replace',
+      'effect' => 'fade',
+      'progress' => array(
+        'type' => 'throbber',
+      ),
+    ),
   );
 
-  $pre_custom = '<script type="text/javascript">
-        function get_image(val)
-        {
-          if (val == ' . KalturaSettings_CW_UICONF_ID_VIDEO . ') return "<img src=\''. $base_path . drupal_get_path('module', 'kaltura') .'/images/'. 'video-cw.jpg\' />";
-          if (val == ' . KalturaSettings_CW_UICONF_ID_IMAGE . ') return "<img src=\''. $base_path . drupal_get_path('module', 'kaltura') .'/images/'. 'image-cw.jpg\' />";
-          if (val == ' . KalturaSettings_CW_UICONF_ID_AUDIO . ') return "<img src=\''. $base_path . drupal_get_path('module', 'kaltura') .'/images/'. 'audio-cw.jpg\' />";
-          if (val == ' . KalturaSettings_CW_UICONF_ID . ') return "<img src=\''. $base_path . drupal_get_path('module', 'kaltura') .'/images/'. 'all-cw.jpg\' />";
-
-          return "";
-        }
-
-        function change_cw(val)
-        {
-          div = document.getElementById("entry_custom");
-          div_image = document.getElementById("entry_image");
-          if (val == 1)
-          {
-            div.style.display="block";
-            div_image.style.display="none";
-          }
-          else
-          {
-            div.style.display="none";
-            div_image.innerHTML = get_image(val);
-            div_image.style.display="block";
-          }
-        }
-        $(document).ready(function() {try{change_cw('. $default_cw .');}catch(ex){}});
-        </script>';
-
-  $custom_display = ($default_cw != '1' ? 'style="display:none"' : '');
-  $return_array[] = array(
-    '#type' => 'textfield',
-    '#size' => 10,
-    '#title' => t('Custom CW'),
-    '#description' => t('Please insert ui_conf_id only'),
-    '#prefix' => $pre_custom .'<div id="entry_custom" '. $custom_display .'>',
-    '#suffix' => '</div>',
-    '#default_value' => variable_get($cw_custom, ''),
-  );
-
+  if ($default_cw != '1') {
+    $return_array[] = array(
+      '#value' => '<div id="uploader_wrapper"></div>',
+    );
+  }
+  else {
+    $return_array[] = array(
+      '#type' => 'textfield',
+      '#size' => 10,
+      '#title' => t('Custom CW'),
+      '#description' => t('Please insert ui_conf_id only'),
+      '#default_value' => variable_get($cw_custom, ''),
+      '#prefix' => '<div id="uploader_wrapper">',
+      '#suffix' => '</div>',
+    );
+  }
   return $return_array;
 }
 
