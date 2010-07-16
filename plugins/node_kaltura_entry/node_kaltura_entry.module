@@ -47,7 +47,7 @@ function node_kaltura_entry_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array( 'kaltura_entry_settings_form' ),
     'access arguments' => array( 'administer kaltura' ),
-    'type' => MENU_NORMAL_ITEM,
+    'type' => MENU_LOCAL_TASK,
     'weight' => -7,
   );
   return $items;

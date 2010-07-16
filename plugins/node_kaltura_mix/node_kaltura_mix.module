@@ -48,7 +48,7 @@ function node_kaltura_mix_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('kaltura_mix_settings_form'),
     'access arguments' => array('administer kaltura'),
-    'type' => MENU_NORMAL_ITEM,
+    'type' => MENU_LOCAL_TASK,
     'weight' => -6,
   );
 
