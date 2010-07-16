@@ -37,43 +37,28 @@ function kaltura_menu() {
   $items['admin/settings/kaltura'] = array(
     'title' => 'Kaltura',
     'file' => 'includes/kaltura.admin.inc',
-    'description' => 'List of Kaltura administration pages.',
-    'page callback' => 'kaltura_settings_main',
+    'description' => 'Server integration settings.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('kaltura_settings_form'),
     'access arguments' => array('administer kaltura'),
     'type' => MENU_NORMAL_ITEM
   );
 
   $items['admin/settings/kaltura/general'] = array(
-    'title' => 'Server Integration Settings',
-    'file' => 'includes/kaltura.admin.inc',
-    'description' => 'Server integration settings.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('kaltura_settings_form'),
-    'access arguments' => array('administer kaltura'),
-    'type' => MENU_NORMAL_ITEM,
+    'title' => 'Settings',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,
-  );
-
-  $items['admin/settings/kaltura/kaltura_credits_settings'] = array(
-    'title' => 'Credits Settings',
-    'file' => 'includes/kaltura.admin.inc',
-    'description' => 'Credits Settings',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('kaltura_credits_settings_form'),
-    'access arguments' => array('administer kaltura'),
-    'type' => MENU_NORMAL_ITEM,
-    'weight' => 10,
   );
 
   $items['admin/settings/kaltura/entries'] = array(
     'title' => 'List of Kaltura Items',
     'page callback' => 'kaltura_list_entries',
     'access callback' => TRUE,
-    'type' => MENU_NORMAL_ITEM,
+    'type' => MENU_LOCAL_TASK,
     'weight' => 20,
   );
 
-  $items['admin/settings/kaltura/import'] = array(
+  $items['admin/settings/kaltura/entries/import'] = array(
     'title' => 'Importing Entries from Kaltura to Drupal',
     'file' => 'includes/kaltura.admin.inc',
     'description' => 'import your partner\'s entries from kaltura\'s server to drupal, as nodes',
@@ -455,7 +440,11 @@ function theme_list_of_entries($arr_nodes_nids, $allow_insert = FALSE, $field_na
   $filter .= l('Photos', $_GET['q'], array('query' => array('filter' => '2', 'cwurl' => $_GET['cwurl']))) .' | '.
   l('Remixes', $_GET['q'], array('query' => array('filter' => '6', 'cwurl' => $_GET['cwurl'])));
   $filter .= ' | '. l('Audio', $_GET['q'], array('query' => array('filter' => '5', 'cwurl' => $_GET['cwurl'])));
-  $str = '<div id="kaltura_entries_page" class="'. (($allow_insert)? 'minimal_mode': '') .'"><div class="kfilter">'. $filter .'</div><ul>';
+  $str = '<div id="kaltura_entries_page" class="'. (($allow_insert)? 'minimal_mode': '') .'">';
+  if (user_access('administer kaltura')) {
+    $str .= l('Import entries from Kaltura', 'admin/settings/kaltura/entries/import');
+  }
+  $str .= '<div class="kfilter">'. $filter .'</div><ul>';
   if (is_array($arr_nodes_nids) && count($arr_nodes_nids)) {
     foreach ($arr_nodes_nids as $nid => $dets) {
       $str .= '<li class="kentry"><div class="kentry_title">'. l($dets->title, 'node/'. $nid, array('attributes' => array('target' => '_blank'))) .'</div>'. PHP_EOL;

@@ -7,59 +7,6 @@
  *
  */
 
-/*
- * callback function for admin/settings/kalturas
- *
- * returns HTML with links to all configuration pages of the module
- */
-function kaltura_settings_main() {
-  _kaltura_init();
-  $items = array();
-  $items[] = l('Server Integration settings', 'admin/settings/kaltura/general');
-  if (module_exists('node_kaltura_entry')) {
-    $items[] = l('Media Node Settings', 'admin/settings/kaltura/kaltura_entry_settings');
-  }
-  if (module_exists('node_kaltura_mix')) {
-    $items[] = l('Media Remix Settings', 'admin/settings/kaltura/kaltura_mix_settings');
-  }
-  if (module_exists('kaltura_comments')) {
-    $items[] = l('Video Comments Settings', 'admin/settings/kaltura/kaltura_comments_settings');
-  }
-  if (module_exists('kaltura_playlist')) {
-    $items[] = l('Playlist Node Settings', 'admin/settings/kaltura/kaltura_playlist_settings');
-  }
-
-  $items[] = l('Credits Settings', 'admin/settings/kaltura/kaltura_credits_settings');
-
-  $items[] = l('List of Kaltura Items', 'kaltura/entries');
-
-  return theme_item_list($items);
-}
-/**
- *
- * @return unknown_type
- */
-function kaltura_credits_settings_form() {
-  $form = array();
-  $text = '<b>Open Source Video Links</b>'. PHP_EOL;
-  $text .= 'Kaltura invests a great deal of effort in the open source community, and specifically in the open source video movement.';
-  $text .= 'The following two links will be included within the video player in order to further promote Kaltura and its efforts in the open video space. ';
-  $text .= 'We hope that you will join us by including these links in the player.'. PHP_EOL;
-  $text .= l('open source video', 'http://corp.kaltura.com/download') . PHP_EOL . l('video platform', 'http://corp.kaltura.com/technology/');
-
-  $form['kaltura_credits_text'] = array(
-    '#type' => 'item',
-    '#value' => nl2br($text),
-  );
-  $form['kaltura_display_credits'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Include links in player'),
-    '#option' => t('Include links in player'),
-    '#default_value' => variable_get('kaltura_display_credits', 1),
-  );
-  return system_settings_form($form);
-}
-
 /**
  * helper function that process the partner registration with kaltura
  *
@@ -666,6 +613,29 @@ function kaltura_settings_form() {
       '#maxlength' => 64
     );
   }
+
+  $form['kaltura_credits'] = array(
+     '#type' => 'fieldset',
+     '#title' => 'Credits',
+     '#collapsible' => TRUE,
+     '#collapsed' => TRUE,
+  );
+  $text = '<b>Open Source Video Links</b>'. PHP_EOL;
+  $text .= 'Kaltura invests a great deal of effort in the open source community, and specifically in the open source video movement.';
+  $text .= 'The following two links will be included within the video player in order to further promote Kaltura and its efforts in the open video space. ';
+  $text .= 'We hope that you will join us by including these links in the player.'. PHP_EOL;
+  $text .= l('open source video', 'http://corp.kaltura.com/download') . PHP_EOL . l('video platform', 'http://corp.kaltura.com/technology/');
+
+  $form['kaltura_credits']['kaltura_credits_text'] = array(
+    '#type' => 'item',
+    '#value' => nl2br($text),
+  );
+  $form['kaltura_credits']['kaltura_display_credits'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Include links in player'),
+    '#option' => t('Include links in player'),
+    '#default_value' => variable_get('kaltura_display_credits', 1),
+  );
 
   $form['kaltura_help_message'] = array(
     '#type' => 'item',
