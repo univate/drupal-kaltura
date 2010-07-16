@@ -48,6 +48,7 @@ function kaltura_replace_tags($content, $is_comment = FALSE, $replace_to_thumb =
         if ($tag[drupal_strlen($tag) - 1] != ']') {
           $tags[$tag_num] .= ']';
         }
+
         $kaltura_tags[] = $tags[$tag_num];
       }
     }
@@ -59,86 +60,31 @@ function kaltura_replace_tags($content, $is_comment = FALSE, $replace_to_thumb =
 }*/
 
   foreach ($kaltura_tags as $kaltura_tag) {
-    $found = TRUE;
     // parse the parameters from the tag
+    // and get the embed options
     $params = kaltura_get_params_from_tag($kaltura_tag);
-    // get the embed options from the params
     $embed_options = kaltura_get_embed_options($params);
 
-    $wid = $embed_options["wid"];
-    $width = $embed_options["width"];
-    $height = $embed_options["height"];
-    $div_id = "kaltura_wrapper_". $wid;
-    $thumbnail_div_id = "kaltura_thumbnail_". $wid;
-    $player_id = "kaltura_player_". $wid;
-    $partner_config = KalturaHelpers::getServiceConfiguration();
-    $kaltura_server = (variable_get('kaltura_server_url', ''))? variable_get('kaltura_server_url', ''): KalturaSettings_SERVER_URL;
-
-    $kaltura_poweredby = '<div style="width: '. $width .'px;" class="poweredByKaltura">'.
-    '<!--<div><a target="_blank" href="http://drupal.kaltura.org">Video Module</a> by <a target="_blank" href="http://corp.kaltura.com">Kaltura</a></div>-->'.
-    '</div>';
-    if (variable_get('kaltura_display_credits', 1)) {
-      $links = '<a href="http://corp.kaltura.com/download">open source video</a><a href="http://corp.kaltura.com/technology/">video platform</a>';
-    }
     if ($replace_to_thumb === TRUE) {
+      $partner_config = KalturaHelpers::getServiceConfiguration();
+      $kaltura_server = (variable_get('kaltura_server_url', ''))? variable_get('kaltura_server_url', ''): KalturaSettings_SERVER_URL;
       $html = '<img src="'. $kaltura_server .'/p/'. $partner_config->partnerId .'/sp/'. $partner_config->subPartnerId .'/thumbnail/entry_id/'. $embed_options["media_id"] .'" />';
-      $content = str_replace($kaltura_tag, $html, $content);
-      continue;
-    }
-
-    $embed_textarea_id = "kaltura_embed_". $embed_options["media_id"];
-    $div_id = "kaltura_wrapper_". $embed_options["media_id"];
-    $player_id = ($embed_options['div_id'])? $embed_options['div_id']: "kaltura_player_". $embed_options["media_id"];
-    $align = ($embed_options["align"])? 'text-align:'. $embed_options["align"] .'; ': '';
-    if ($is_comment) {
-      $thumb_div_id = 'kaltura_thumbnail_'. $embed_options["media_id"];
-      $onclick_value = 'kaltura_activate_player(\''. $thumb_div_id .'\',\''. $div_id .'\');';
-      $img_tag = '<img src="'. $kaltura_server .'/p/'. $partner_config->partnerId .'/sp/'. $partner_config->subPartnerId .'/thumbnail/entry_id/'. $embed_options["media_id"] .'/width/'. $width .'/height/'. $height .'/type/2/bgcolor/000000/crop_provider/wordpress_comment_placeholder" />';
-      $comment_div = '<div id="'. $thumb_div_id .'" class="kaltura_hand" onclick="'. $onclick_value .'">';
-      $comment_div .= $img_tag .'</div>';
     }
     else {
-      $comment_div = '';
+      $found = TRUE;
+      $html = kaltura_tag_to_html($params, $embed_options);
+      dsm($embed_options);
+      drupal_add_js(array('kaltura' => 
+          $embed_options
+        ),
+        'setting'
+     );
     }
-
-    $html .= $comment_div .'
-      <div id="'. $div_id .'" class="kaltura_wrapper" style="'. (($comment_div != '')? 'display:none;':'') . $align . $embed_options['custom_style'] .'"'. $embed_options['js_events'] .'>'. $links .'</div>'. $kaltura_poweredby;
-     if ($show_embed) {
-       if ($params['media_type'] == 'viewplaylist') $title_class="kaltura_embed_title";
-       $html .= '<div class="kaltura_embed_code"><strong class="'. $title_class .'">Embed code of this video:</strong><br /><textarea style="overflow-y:auto" id="'. $embed_textarea_id .'" onclick="javascript:this.focus; this.select();"></textarea></div>';
-    }
-
-    //Render KDP
-    $html .= '<script type="text/javascript">
-              var kaltura_swf = new SWFObject("'. $embed_options["swfUrl"] .'", "'. $player_id .'", "'. $embed_options["width"] .'", "'. $embed_options["height"] .'", "9", "#000000");
-              kaltura_swf.addParam("wmode", "opaque");
-              kaltura_swf.addParam("flashVars", "'. $embed_options["flashVars"] . (($comment_div != '')? '&autoPlay=true': '') .'");
-              kaltura_swf.addParam("allowScriptAccess", "always");
-              kaltura_swf.addParam("allowFullScreen", "TRUE");
-              kaltura_swf.addParam("allowNetworking", "all");
-              kaltura_swf.write("'. $div_id .'");';
-    if ($show_embed) {
-      $html .= '
-        user_embed_textbox = document.getElementById("'. $embed_textarea_id .'");
-        user_embed_textbox.value = kaltura_swf.getSWFHTML();
-      ';
-    }
-    if ($params['media_type'] == 'viewplaylist' &&  ($added_playlist == FALSE)) {
-      $added_playlist = TRUE;
-      $html .= '
-        function customFunc1(parm) {prev_playlist_item()}
-        function customFunc2(parm) {next_playlist_item();}
-        ';
-    }
-    $html .= '</script>
-    ';
-
-    // rebuild the html with our new code tag
     $content = str_replace($kaltura_tag, $html, $content);
   }
 
-  if ($found && $replace_to_thumb === FALSE) {
-    $plugin_url = KalturaHelpers::getKalturaServerUrl();
+  if ($found) {
+//    $plugin_url = KalturaHelpers::getKalturaServerUrl();
     $js = '
       <script type="text/javascript">';
 
@@ -199,6 +145,78 @@ function kaltura_replace_tags($content, $is_comment = FALSE, $replace_to_thumb =
 
   return $content;
 }
+
+/**
+ * Pass a tag and convert to html
+ */
+function kaltura_tag_to_html($params, $embed_options) {
+    $found = TRUE;
+
+    $wid = $embed_options["wid"];
+    $width = $embed_options["width"];
+    $height = $embed_options["height"];
+    $div_id = "kaltura_wrapper_". $wid;
+    $thumbnail_div_id = "kaltura_thumbnail_". $wid;
+    $player_id = "kaltura_player_". $wid;
+    $partner_config = KalturaHelpers::getServiceConfiguration();
+    $kaltura_server = (variable_get('kaltura_server_url', ''))? variable_get('kaltura_server_url', ''): KalturaSettings_SERVER_URL;
+
+    $kaltura_poweredby = '<div style="width: '. $width .'px;" class="poweredByKaltura">'.
+    '<!--<div><a target="_blank" href="http://drupal.kaltura.org">Video Module</a> by <a target="_blank" href="http://corp.kaltura.com">Kaltura</a></div>-->'.
+    '</div>';
+    if (variable_get('kaltura_display_credits', 1)) {
+      $links = '<a href="http://corp.kaltura.com/download">open source video</a><a href="http://corp.kaltura.com/technology/">video platform</a>';
+    }
+
+    $embed_textarea_id = "kaltura_embed_". $embed_options["media_id"];
+    $div_id = "kaltura_wrapper_". $embed_options["media_id"];
+    $player_id = ($embed_options['div_id'])? $embed_options['div_id']: "kaltura_player_". $embed_options["media_id"];
+    $align = ($embed_options["align"])? 'text-align:'. $embed_options["align"] .'; ': '';
+    if ($is_comment) {
+      $thumb_div_id = 'kaltura_thumbnail_'. $embed_options["media_id"];
+      $onclick_value = 'kaltura_activate_player(\''. $thumb_div_id .'\',\''. $div_id .'\');';
+      $img_tag = '<img src="'. $kaltura_server .'/p/'. $partner_config->partnerId .'/sp/'. $partner_config->subPartnerId .'/thumbnail/entry_id/'. $embed_options["media_id"] .'/width/'. $width .'/height/'. $height .'/type/2/bgcolor/000000/crop_provider/wordpress_comment_placeholder" />';
+      $comment_div = '<div id="'. $thumb_div_id .'" class="kaltura_hand" onclick="'. $onclick_value .'">';
+      $comment_div .= $img_tag .'</div>';
+    }
+    else {
+      $comment_div = '';
+    }
+
+    $html .= $comment_div .'
+      <div id="'. $div_id .'" class="kaltura_wrapper" style="'. (($comment_div != '')? 'display:none;':'') . $align . $embed_options['custom_style'] .'"'. $embed_options['js_events'] .'>'. $links .'</div>'. $kaltura_poweredby;
+     if ($show_embed) {
+       if ($params['media_type'] == 'viewplaylist') $title_class="kaltura_embed_title";
+       $html .= '<div class="kaltura_embed_code"><strong class="'. $title_class .'">Embed code of this video:</strong><br /><textarea style="overflow-y:auto" id="'. $embed_textarea_id .'" onclick="javascript:this.focus; this.select();"></textarea></div>';
+    }
+
+    //Render KDP
+    $html .= '<script type="text/javascript">
+              var kaltura_swf = new SWFObject("'. $embed_options["swfUrl"] .'", "'. $player_id .'", "'. $embed_options["width"] .'", "'. $embed_options["height"] .'", "9", "#000000");
+              kaltura_swf.addParam("wmode", "opaque");
+              kaltura_swf.addParam("flashVars", "'. $embed_options["flashVars"] . (($comment_div != '')? '&autoPlay=true': '') .'");
+              kaltura_swf.addParam("allowScriptAccess", "always");
+              kaltura_swf.addParam("allowFullScreen", "TRUE");
+              kaltura_swf.addParam("allowNetworking", "all");
+              kaltura_swf.write("'. $div_id .'");';
+    if ($show_embed) {
+      $html .= '
+        user_embed_textbox = document.getElementById("'. $embed_textarea_id .'");
+        user_embed_textbox.value = kaltura_swf.getSWFHTML();
+      ';
+    }
+    if ($params['media_type'] == 'viewplaylist' &&  ($added_playlist == FALSE)) {
+      $added_playlist = TRUE;
+      $html .= '
+        function customFunc1(parm) {prev_playlist_item()}
+        function customFunc2(parm) {next_playlist_item();}
+        ';
+    }
+    $html .= '</script>
+    ';
+    return $html;
+}
+
 
 /**
  * helper function that breaks the "kaltura tag" into parameters
