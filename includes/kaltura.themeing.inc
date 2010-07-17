@@ -17,20 +17,13 @@ $GLOBALS['_kaltura_client_folder'] = drupal_get_path('module', 'kaltura') .'/kal
  * some of the return content is a javascript with handler functions for the buttons on the player
  */
 function kaltura_replace_tags($content, $is_comment = FALSE, $replace_to_thumb = FALSE, $edit_mix_access = FALSE, $show_embed = FALSE, $content_type = NULL) {
-
   global $user, $multibyte;
-  $kaltura_editor_width = (variable_get('kaltura_editor_width', ''))? variable_get('kaltura_editor_width', ''): KalturaSettings_SE_WIDTH;
-  $kaltura_editor_height = (variable_get('kaltura_editor_height', ''))? variable_get('kaltura_editor_height', ''): KalturaSettings_SE_HEIGHT;
-  $kaltura_editor_URL = (variable_get('kaltura_editor_URL', ''))? variable_get('kaltura_editor_URL', ''): KalturaSettings_SE_URL;
-  $added_playlist = FALSE;
 
-  $length = drupal_strlen($content);
   // add PHP_EOL before each kaltura widget to ensure correct grep_match results
   $content = str_replace('[kaltura-widget', PHP_EOL .'[kaltura-widget', $content);
-  $found = FALSE;
   preg_match_all('/\[kaltura-widget(.*)\/\]/', $content, $matches);
-  $kaltura_tags = array();
 
+  $kaltura_tags = array();
   foreach ($matches[0] as $key => $match) {
 
     if (strpos($match, '/][kal', $split_point) === FALSE) {
@@ -54,169 +47,62 @@ function kaltura_replace_tags($content, $is_comment = FALSE, $replace_to_thumb =
     }
   }
 
-//get the node ID if available - needed to identify node access
-/*if ( arg(0) == 'node' && is_numeric(arg(1)) ) {
-  $node_id = arg(1);
-}*/
-
   foreach ($kaltura_tags as $kaltura_tag) {
     // parse the parameters from the tag
     // and get the embed options
     $params = kaltura_get_params_from_tag($kaltura_tag);
     $embed_options = kaltura_get_embed_options($params);
 
+    $html = '';
     if ($replace_to_thumb === TRUE) {
       $partner_config = KalturaHelpers::getServiceConfiguration();
       $kaltura_server = (variable_get('kaltura_server_url', ''))? variable_get('kaltura_server_url', ''): KalturaSettings_SERVER_URL;
-      $html = '<img src="'. $kaltura_server .'/p/'. $partner_config->partnerId .'/sp/'. $partner_config->subPartnerId .'/thumbnail/entry_id/'. $embed_options["media_id"] .'" />';
+      $html .= '<img src="'. $kaltura_server .'/p/'. $partner_config->partnerId .'/sp/'. $partner_config->subPartnerId .'/thumbnail/entry_id/'. $embed_options["media_id"] .'" />';
     }
     else {
-      $found = TRUE;
-      $html = kaltura_tag_to_html($params, $embed_options);
-      dsm($embed_options);
-      drupal_add_js(array('kaltura' => 
-          $embed_options
-        ),
-        'setting'
-     );
-    }
-    $content = str_replace($kaltura_tag, $html, $content);
-  }
-
-  if ($found) {
-//    $plugin_url = KalturaHelpers::getKalturaServerUrl();
-    $js = '
-      <script type="text/javascript">';
-
-    $js .= '
-        function onPlayerAddClick (kshowId,entryId,pd_extraData) {
-          if (kshowId && kshowId != -1)
-            kalturaInitModalBox("'. url("kaltura/contribution_wizard/") .'" + kshowId);
-          if (entryId && entryId != -1 && "true" == "'. (($embed_options['roughcut'])? 'true': '') .'")
-            kalturaInitModalBox("'. url("kaltura/contribution_wizard/") . (($embed_options['roughcut'])? 'entry-': '') .'" + entryId );
-        }';
-
-    $js .= '
-        function onPlayerEditClick (kshowId,entryId,pd_extraData) {
-          if (kshowId && kshowId != -1 && "true" == "'. (($embed_options['kshow'])? 'true': '') .'")
-            kalturaInitModalBox("'. url($kaltura_editor_URL) .'/" + kshowId + "/kshow/user_id@'. $user->uid .'", { width: '. $kaltura_editor_width .', height: '. $kaltura_editor_height .' } );
-          if (entryId && entryId != -1 && "true" == "'. (($embed_options['roughcut'])? 'true': '') .'")
-            kalturaInitModalBox("'. url($kaltura_editor_URL) .'/" + entryId + "/entry/user_id@'. $user->uid .'", { width: '. $kaltura_editor_width .', height: '. $kaltura_editor_height .' } );
-        }';
-
-    //NOTE CM: new KDP v2 Editor handler
-
-    if ($edit_mix_access) {
-      $js .= '
-        function gotoEditorWindow(entryID) {';
-
-      //If the edit button is pressed on the Drupal node edit page, remind user that they still need to submit the node, especially if it's new, else they won't be able to access their content.
-      if (arg(count(arg())-1) == 'edit') {
-        $js .= 'alert("WARNING: Edits are not saved until you submit this form.  You should submit first before editing your mix.");';
+      // I think this block of code belongs in the kaltura_comment module
+      /*
+      $align = ($embed_options["align"])? 'text-align:'. $embed_options["align"] .'; ': '';
+      if ($is_comment) {
+        $thumb_div_id = 'kaltura_thumbnail_'. $embed_options["media_id"];
+        $onclick_value = 'kaltura_activate_player(\''. $thumb_div_id .'\',\''. $div_id .'\');';
+        $img_tag = '<img src="'. $kaltura_server .'/p/'. $partner_config->partnerId .'/sp/'. $partner_config->subPartnerId .'/thumbnail/entry_id/'. $embed_options["media_id"] .'/width/'. $width .'/height/'. $height .'/type/2/bgcolor/000000/crop_provider/wordpress_comment_placeholder" />';
+        $comment_div = '<div id="'. $thumb_div_id .'" class="kaltura_hand" onclick="'. $onclick_value .'">';
+        $comment_div .= $img_tag .'</div>';
+      }
+      else {
+        $comment_div = '';
       }
 
-      $js .= '
-        kalturaInitModalBox("'. url($kaltura_editor_URL) .'/" + entryID + "/entry/user_id@'. $user->uid .'", { width: '. $kaltura_editor_width .', height: '. $kaltura_editor_height .' });
-      }';
-    }
-    else {
-      $js .= '
-      function gotoEditorWindow(entryID) {
-        if (entryID) {
-          window.location = "'. url("kaltura/clone") .'/"+entryID+"/'. $content_type .'/confirm";
-        }
-      }';
-    }
+      $html .= $comment_div;
+      */
 
-    $js .= '
-        function handleGotoContribWizard (kshowId, pd_extraData) {
-          kalturaInitModalBox("'. url("kaltura/contribution_wizard/") .'" + kshowId);
-        }';
-    /*
-    $js .= '
-        function handleGotoEditorWindow (kshowId, pd_extraData) {
-          kalturaInitModalBox("'. url($kaltura_editor_URL) .'/" + kshowId, { width: 890, height: 546 } );
-        }';
-    */
-    $js .= '</script>';
+      $kaltura_settings = $embed_options;
+      $kaltura_settings['uid'] = $user->uid;
+      $kaltura_settings['contribution_wizard_url'] = url("kaltura/contribution_wizard/");
+      $kaltura_settings['editor_height'] = (variable_get('kaltura_editor_height', ''))? variable_get('kaltura_editor_height', '') : KalturaSettings_SE_HEIGHT;
+      $kaltura_settings['editor_width'] = (variable_get('kaltura_editor_width', ''))? variable_get('kaltura_editor_width', ''): KalturaSettings_SE_WIDTH;
+      $kaltura_settings['editor_url'] = (variable_get('kaltura_editor_URL', ''))? variable_get('kaltura_editor_URL', ''): KalturaSettings_SE_URL;
+      
+      drupal_add_js(array('kaltura' => array($embed_options['media_id'] => $kaltura_settings)),'setting');
+      drupal_add_js(drupal_get_path("module", "kaltura") ."/kaltura.js");
 
-    $content .= $js;
+      $html = theme('kaltura_player', $embed_options['media_id'], array('show_embed' => $show_embed));
+    }
+    $content = str_replace($kaltura_tag, $html, $content);
   }
 
   return $content;
 }
 
-/**
- * Pass a tag and convert to html
+/** 
+ * Preprocessor function for kaltura player
  */
-function kaltura_tag_to_html($params, $embed_options) {
-    $found = TRUE;
-
-    $wid = $embed_options["wid"];
-    $width = $embed_options["width"];
-    $height = $embed_options["height"];
-    $div_id = "kaltura_wrapper_". $wid;
-    $thumbnail_div_id = "kaltura_thumbnail_". $wid;
-    $player_id = "kaltura_player_". $wid;
-    $partner_config = KalturaHelpers::getServiceConfiguration();
-    $kaltura_server = (variable_get('kaltura_server_url', ''))? variable_get('kaltura_server_url', ''): KalturaSettings_SERVER_URL;
-
-    $kaltura_poweredby = '<div style="width: '. $width .'px;" class="poweredByKaltura">'.
-    '<!--<div><a target="_blank" href="http://drupal.kaltura.org">Video Module</a> by <a target="_blank" href="http://corp.kaltura.com">Kaltura</a></div>-->'.
-    '</div>';
-    if (variable_get('kaltura_display_credits', 1)) {
-      $links = '<a href="http://corp.kaltura.com/download">open source video</a><a href="http://corp.kaltura.com/technology/">video platform</a>';
-    }
-
-    $embed_textarea_id = "kaltura_embed_". $embed_options["media_id"];
-    $div_id = "kaltura_wrapper_". $embed_options["media_id"];
-    $player_id = ($embed_options['div_id'])? $embed_options['div_id']: "kaltura_player_". $embed_options["media_id"];
-    $align = ($embed_options["align"])? 'text-align:'. $embed_options["align"] .'; ': '';
-    if ($is_comment) {
-      $thumb_div_id = 'kaltura_thumbnail_'. $embed_options["media_id"];
-      $onclick_value = 'kaltura_activate_player(\''. $thumb_div_id .'\',\''. $div_id .'\');';
-      $img_tag = '<img src="'. $kaltura_server .'/p/'. $partner_config->partnerId .'/sp/'. $partner_config->subPartnerId .'/thumbnail/entry_id/'. $embed_options["media_id"] .'/width/'. $width .'/height/'. $height .'/type/2/bgcolor/000000/crop_provider/wordpress_comment_placeholder" />';
-      $comment_div = '<div id="'. $thumb_div_id .'" class="kaltura_hand" onclick="'. $onclick_value .'">';
-      $comment_div .= $img_tag .'</div>';
-    }
-    else {
-      $comment_div = '';
-    }
-
-    $html .= $comment_div .'
-      <div id="'. $div_id .'" class="kaltura_wrapper" style="'. (($comment_div != '')? 'display:none;':'') . $align . $embed_options['custom_style'] .'"'. $embed_options['js_events'] .'>'. $links .'</div>'. $kaltura_poweredby;
-     if ($show_embed) {
-       if ($params['media_type'] == 'viewplaylist') $title_class="kaltura_embed_title";
-       $html .= '<div class="kaltura_embed_code"><strong class="'. $title_class .'">Embed code of this video:</strong><br /><textarea style="overflow-y:auto" id="'. $embed_textarea_id .'" onclick="javascript:this.focus; this.select();"></textarea></div>';
-    }
-
-    //Render KDP
-    $html .= '<script type="text/javascript">
-              var kaltura_swf = new SWFObject("'. $embed_options["swfUrl"] .'", "'. $player_id .'", "'. $embed_options["width"] .'", "'. $embed_options["height"] .'", "9", "#000000");
-              kaltura_swf.addParam("wmode", "opaque");
-              kaltura_swf.addParam("flashVars", "'. $embed_options["flashVars"] . (($comment_div != '')? '&autoPlay=true': '') .'");
-              kaltura_swf.addParam("allowScriptAccess", "always");
-              kaltura_swf.addParam("allowFullScreen", "TRUE");
-              kaltura_swf.addParam("allowNetworking", "all");
-              kaltura_swf.write("'. $div_id .'");';
-    if ($show_embed) {
-      $html .= '
-        user_embed_textbox = document.getElementById("'. $embed_textarea_id .'");
-        user_embed_textbox.value = kaltura_swf.getSWFHTML();
-      ';
-    }
-    if ($params['media_type'] == 'viewplaylist' &&  ($added_playlist == FALSE)) {
-      $added_playlist = TRUE;
-      $html .= '
-        function customFunc1(parm) {prev_playlist_item()}
-        function customFunc2(parm) {next_playlist_item();}
-        ';
-    }
-    $html .= '</script>
-    ';
-    return $html;
+function template_preprocess_kaltura_player(&$variables) {
+  if ($variables['options']['show_embed']) {
+    $variables['embed_title'] = t('Embed code of this video:');
+  }
 }
-
 
 /**
  * helper function that breaks the "kaltura tag" into parameters

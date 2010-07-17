@@ -183,6 +183,11 @@ function kaltura_theme() {
     'kaltura_maintenance_page' => array(
       'arguments' => array('text' => NULL),
     ),
+    'kaltura_player' => array(
+      'template' => 'kaltura-player',
+      'arguments' => array('media_id' => NULL, 'options' => NULL),
+      'path' => drupal_get_path("module", "kaltura") . '/theme',
+    ),
   );
 
   return $themes;
@@ -248,6 +253,7 @@ function kaltura_search($op, $keys = NULL) {
     case 'search':
       $query = kaltura_build_search();
       $results = db_query($query, $keys);
+
       while ($result = db_fetch_object($results)) {
         $kaltura_results[] = array(
           'link' => l($result->nid, 'node/'. $result->nid),
@@ -281,8 +287,6 @@ function kaltura_build_search() {
  */
 function kaltura_nodeapi(&$node, $op, $teaser) {
   module_load_include('inc', 'kaltura', 'includes/kaltura.themeing');
-  $node_update_access = node_access('update', $node);
-  $show_embed = user_access('view Kaltura embed code');
   switch ($op) {
     case "load":
       break;
@@ -292,6 +296,8 @@ function kaltura_nodeapi(&$node, $op, $teaser) {
       $node->body = kaltura_replace_tags($node->body, FALSE, TRUE);
       break;
     case "alter":
+      $node_update_access = node_access('update', $node);
+      $show_embed = user_access('view Kaltura embed code');
       $node->body = kaltura_replace_tags($node->body, FALSE, FALSE, $node_update_access, $show_embed, $node->type);
       $node->teaser = kaltura_replace_tags($node->teaser);
       break;
