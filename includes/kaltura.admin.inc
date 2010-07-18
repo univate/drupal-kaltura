@@ -19,7 +19,7 @@
  * removed references to categories
  * questions: this method created problems within getServiceConfiguration wrt the Logger
  */
-function register_kaltura_partner() {
+function kaltura_register_partner() {
   global $base_url;
   $partner = new KalturaPartner();
   $partner->name =              $_REQUEST['partner_name'];
@@ -95,7 +95,7 @@ function register_kaltura_partner() {
  * the user is being redirected to the modules settings page where he should see the details inserted
  * and a configuration test which says that the configuraion works
  */
-function import_ce() {
+function kaltura_import_ce() {
   try {
     $url = $_REQUEST['ce_url'];
     $email = $_REQUEST['ce_admin_email'];
@@ -285,7 +285,7 @@ function kaltura_settings_form() {
   $register_visible = FALSE;
   if ($_REQUEST['partner_name'] && $_REQUEST['op'] == 'Complete Installation') {
     if ($_REQUEST['kaltura_agree_terms'] == 1) {
-      register_kaltura_partner();
+      kaltura_register_partner();
     }
     else {
       drupal_set_message('You must agree to the terms of use', 'error');
@@ -293,7 +293,7 @@ function kaltura_settings_form() {
   }
 
   if ($_REQUEST['op'] == 'Complete Installation' && $_REQUEST['ce_url'])   {
-    import_ce();
+    kaltura_import_ce();
   }
 
   /**
@@ -1001,7 +1001,7 @@ function kaltura_variable_get_real($var, $default) {
 /**
  * Used when SimpleXML is not available; just assume everything looks OK and hope for the best.
  */
-function alternate_xml_verification($filename) {
+function kaltura_alternate_xml_verification($filename) {
   return array(
     TRUE,
     t('crossdomain.xml is in place and seems to be OK')
@@ -1038,7 +1038,7 @@ function kaltura_test_crossdomain() {
  */
 function kaltura_parse_crossdomain($crossdomain_xml) {
   if (!function_exists('simplexml_load_string')) {
-    return alternate_xml_verification($filename);
+    return kaltura_alternate_xml_verification($filename);
   }
   $cd_xml_content = simplexml_load_string($crossdomain_xml);
   foreach ($cd_xml_content->children() as $child) {
@@ -1077,7 +1077,7 @@ function kaltura_update_kaltura_partner($notifications_config = 2, $notification
   $partner->notify = 1;
   $partner->notificationsConfig = '*='. $notifications_config;
 //  $partner->id = variable_get('kaltura_partner_id', '');
-  
+
   $url = url('kaltura/notification_handler', array('absolute' => TRUE));
   $notification_url = ($notification_url == '')? $url: $notification_url;
   $partner->notificationUrl = $notification_url;
