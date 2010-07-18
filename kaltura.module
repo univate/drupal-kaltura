@@ -715,6 +715,32 @@ function kaltura_choose_player($as_single_form, $type, $node_type, $return_widge
     $players_name[$one_player_id] = $one_layer_props['name'];
   }
 
+  if ($node_type == 'entry') {
+    $width = variable_get('kaltura_'. $type .'_'. $node_type .'_width', '410');
+    $height = variable_get('kaltura_'. $type .'_'. $node_type .'_height', '364');
+  }
+  else {
+    $width = variable_get('kaltura_'. $type .'_width', '410');
+    $height = variable_get('kaltura_'. $type .'_height', '364');
+  }
+
+  $wid = '_'. variable_get('kaltura_partner_id', '');
+  $url = KalturaHelpers::getSwfUrlForWidget($wid  .'/entry_id/_KMCLOGO1/uiconf_id/'. $saved_player);
+  $settings = array(
+    'kaltura' => array(
+      $type => array(
+        'swfUrl' => $url,
+        'media_id' => $type,
+        'width' => $width,
+        'height' => $height,
+        'flashVars' => '',
+        'custom_style' => '',
+        'js_events' => '',
+      ),
+    ),
+  );
+  drupal_add_js($settings, 'setting');
+  drupal_add_js(drupal_get_path("module", "kaltura") ."/kaltura.js");
   $form['default_widget']['default_widget_'. $type] = array(
     '#type' => 'select',
     '#title' => t('Video Player for Node'),
@@ -724,16 +750,15 @@ function kaltura_choose_player($as_single_form, $type, $node_type, $return_widge
       'event' => 'change',
       'path' => 'kaltura/ahah/sample_widget/'. $type,
       'wrapper' => 'kaltura_sample_widget_wrapper_'. $type,
-      'method' => 'append',
+      'method' => 'replace',
       'effect' => 'fade',
       'progress' => array(
         'type' => 'throbber',
       ),
-
     )
   );
   $form['default_widget']['sample_widget'] = array(
-    '#value' => '<div id="kaltura_sample_widget_wrapper_'. $type .'"></div>',
+    '#value' => '<div id="kaltura_sample_widget_wrapper_'. $type .'">'. theme('kaltura_player', $type) .'</div>',
   );
   $form['default_widget']['create_new_widget'] = array(
     '#value' => l('Create new player', 'http://www.kaltura.com/index.php/kmc/kmc2#appstudio|players_list', array('attributes' => array('target' => '_blank'))),

@@ -19,7 +19,7 @@ function onPlayerEditClick (kshowId,entryId,pd_extraData) {
  */
 Drupal.behaviors.kalturaPlayer = function (context) {
   $('div.kaltura-player:not(.kaltura-player-processed)').each(function (i) {
-    var media = Drupal.settings.kaltura[$(this).html()]
+    var media = Drupal.settings.kaltura[$(this).html()];
     $(this).html('<div id="kaltura-player-' + media.media_id + '" class="kaltura_wrapper"' + media.custom_style + media.js_events + "></div>");
     var kaltura_swf = new SWFObject(media.swfUrl, "kaltura_player_" + media.media_id, media.width, media.height, '9', '#000000')
     kaltura_swf.addParam("wmode", "opaque");
