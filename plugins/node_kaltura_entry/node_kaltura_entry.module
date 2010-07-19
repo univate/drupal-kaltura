@@ -45,7 +45,7 @@ function node_kaltura_entry_menu() {
     'title' => 'Media Node Settings',
     'description' => 'Administer the kaltura entry module.',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array( 'kaltura_entry_settings_form' ),
+    'page arguments' => array( 'node_kaltura_entry_settings_form' ),
     'access arguments' => array( 'administer kaltura' ),
     'type' => MENU_LOCAL_TASK,
     'weight' => -7,
@@ -57,7 +57,7 @@ function node_kaltura_entry_menu() {
  * provides admin settings page for entry nodes
  * currently - the only settings are the taxonomy vocabularies corresponding to tags and admin tags of kaltura item
  */
-function kaltura_entry_settings_form() {
+function node_kaltura_entry_settings_form() {
   _kaltura_init();
   global $base_path;
 
@@ -69,7 +69,7 @@ function kaltura_entry_settings_form() {
     '#weight' => 0,
   );
 
-  list($regular, $custom) =   kaltura_choose_cw('kaltura_video_entry_cw_type', 'kaltura_video_entry_cw_custom');
+  list($regular, $custom) = kaltura_choose_cw('kaltura_video_entry_cw_type', 'kaltura_video_entry_cw_custom');
   $form['entry_wizards']['kaltura_video_entry_cw_type'] = $regular;
   $form['entry_wizards']['kaltura_video_entry_cw_custom'] = $custom;
 
@@ -488,11 +488,11 @@ function node_kaltura_entry_update($node) {
     // we don't expose the tags and admin tags fields, so no need to update taxonomy by hand.
     // update_entry_node_taxonomy($node);
     if ($node->notification_update !== TRUE) {
-      kaltura_update_entry_tags_from_taxonomy($node);
+      node_kaltura_update_entry_tags_from_taxonomy($node);
     }
 
     if ($node->notification_update !== TRUE) {
-      kaltura_update_entry_tags($node->kaltura_entryId, $node->kaltura_tags, $node->kaltura_admin_tags);
+      node_kaltura_update_entry_tags($node->kaltura_entryId, $node->kaltura_tags, $node->kaltura_admin_tags);
     }
     else {
       // updated through notification. no need to call Kaltura API
@@ -504,7 +504,7 @@ function node_kaltura_entry_update($node) {
  * helper function that takes a node's taxonomy tags
  * and pushes it into the kaltura tags field
  */
-function kaltura_update_entry_tags_from_taxonomy(&$node) {
+function node_kaltura_update_entry_tags_from_taxonomy(&$node) {
   $voc = variable_get('kaltura_entry_tags_voc', '');
   if ($voc != '') {
     $tags = $node->taxonomy['tags'][$voc];
@@ -671,7 +671,7 @@ function theme_node_kaltura_entry_duration($durationoutput) {
  * questions:
  * correct values for media entry name, tags, should we be getting these from the drupal form or the simple editor
  */
-function kaltura_update_entry_tags($eid, $tags, $admin_tags) {
+function node_kaltura_update_entry_tags($eid, $tags, $admin_tags) {
   _kaltura_init();
   $admin = 0;
   $need_admin = 1; //who should init this? Anyway since we update admin_tags the answer is yes we need
