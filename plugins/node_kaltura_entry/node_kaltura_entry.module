@@ -445,7 +445,7 @@ function node_kaltura_entry_form_alter(&$form, &$form_state, $form_id) {
  * helper function to inject the node with tags and admin tags to the
  * corresponding taxonomy vocabularies
  */
-function update_entry_node_taxonomy(&$node) {
+function node_kaltura_entry_update_entry_node_taxonomy(&$node) {
   $voc_id = variable_get('kaltura_entry_tags_voc', '');
   $avoc_id = variable_get('kaltura_entry_admin_tags_voc', '');
   $terms['tags'] = array();
@@ -468,7 +468,7 @@ function update_entry_node_taxonomy(&$node) {
  */
 function node_kaltura_entry_insert(&$node) {
   drupal_write_record('node_kaltura', $node);
-  update_entry_node_taxonomy($node);
+  node_kaltura_entry_update_entry_node_taxonomy($node);
 }
 
 /**
@@ -486,7 +486,7 @@ function node_kaltura_entry_update($node) {
   else {
     drupal_write_record('node_kaltura', $node, array('vid'));
     // we don't expose the tags and admin tags fields, so no need to update taxonomy by hand.
-    // update_entry_node_taxonomy($node);
+    // node_kaltura_entry_update_entry_node_taxonomy($node);
     if ($node->notification_update !== TRUE) {
       node_kaltura_update_entry_tags_from_taxonomy($node);
     }
