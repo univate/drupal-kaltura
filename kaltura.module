@@ -929,3 +929,4 @@ function katlura_get_metadata_for_mix($entry_id) {
   $obj = db_fetch_object($result);
   return $obj;
 }
+

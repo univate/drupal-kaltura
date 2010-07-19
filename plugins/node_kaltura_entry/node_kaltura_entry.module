@@ -492,28 +492,13 @@ function node_kaltura_entry_update($node) {
     node_example_insert($node);
   }
   else {
-    require_once(drupal_get_path('module', 'kaltura') .'/kaltura.install');
-    $fields = kaltura_schema();
-    $first = '';
-    watchdog('node', print_r($node, TRUE));
-    foreach ($fields['node_kaltura']['fields'] as $field => $structure) {
-      if ($field == 'vid' || $field == 'nid' || $field == 'kaltura_entryId' || $field == 'kaltura_video_comment' || $field == 'kaltura_entry_data') continue;
-      $update_str .= $first . $field .' = '. (($structure['type'] == 'int')? "%d": "'%s'");
-      $first = ', ';
-    }
-    // we don't expose the tags and admin tags fields, to no need to update taxonomy by hand.
-//    update_entry_node_taxonomy($node);
+    drupal_write_record('node_kaltura', $node, array('vid'));
+    // we don't expose the tags and admin tags fields, so no need to update taxonomy by hand.
+    // update_entry_node_taxonomy($node);
     if ($node->notification_update !== TRUE) {
       kaltura_update_entry_tags_from_taxonomy($node);
     }
 
-    $sql = 'UPDATE {node_kaltura} SET '. $update_str .' WHERE vid = %d';
-    db_query($sql, $node->kaltura_tags, $node->kaltura_admin_tags, $node->kstatus, $node->kaltura_media_type, $node->kaltura_duration,
-      $node->kaltura_thumbnail_url, $node->kaltura_partner_data, $node->kaltura_source, $node->kaltura_source_id, $node->kaltura_source_link,
-      $node->kaltura_width, $node->kaltura_height, $node->kaltura_download_url, $node->kaltura_media_date, $node->kaltura_views, $node->kaltura_plays,
-      $node->kaltura_votes, $node->kaltura_rank, $node->kaltura_total_rank, $node->vid);
-    // in case the update was done in drupal, and not by notification, we want to update
-    // the metadata in kaltura's DB
     if ($node->notification_update !== TRUE) {
       kaltura_update_entry_tags($node->kaltura_entryId, $node->kaltura_tags, $node->kaltura_admin_tags);
     }
@@ -679,7 +664,7 @@ function theme_node_kaltura_entry_tags($node) {
 * function to render the duration field into HTML
 */
 function theme_node_kaltura_entry_duration($durationoutput) {
-    return $durationoutput;
+  return $durationoutput;
 }
 
 /*
@@ -695,6 +680,7 @@ function theme_node_kaltura_entry_duration($durationoutput) {
  * correct values for media entry name, tags, should we be getting these from the drupal form or the simple editor
  */
 function kaltura_update_entry_tags($eid, $tags, $admin_tags) {
+  _kaltura_init();
   $admin = 0;
   $need_admin = 1; //who should init this? Anyway since we update admin_tags the answer is yes we need
   if ($need_admin) {
