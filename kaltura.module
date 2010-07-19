@@ -186,7 +186,7 @@ function kaltura_theme() {
     'kaltura_player' => array(
       'template' => 'kaltura-player',
       'arguments' => array('media_id' => NULL, 'options' => NULL),
-      'path' => drupal_get_path("module", "kaltura") . '/theme',
+      'path' => drupal_get_path("module", "kaltura") . '/templates',
     ),
   );
 

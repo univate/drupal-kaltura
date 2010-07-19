@@ -403,9 +403,12 @@ function node_kaltura_entry_form(&$node, &$param) {
  * Implementation of hook_theme().
  */
 function node_kaltura_entry_theme() {
+  $path = drupal_get_path("module", "node_kaltura_entry") . '/theme';
   $themes = array(
     'node_kaltura_entry_tags' => array(
       'arguments' => array('element' => NULL),
+      'template' => 'kaltura-node-entry-tags',
+      'path' => $path,
     ),
     'node_kaltura_entry_admin_tags' => array(
       'arguments' => array('themeParams' => NULL),
@@ -642,14 +645,12 @@ function theme_node_kaltura_entry_thumbnail_url($node, $teaser, $nosize = FALSE,
     return '<div class="kaltura_thumb"><img src="'. $node->kaltura_thumbnail_url . $size_str .'" '. $extra .' /></div>';
 }
 
-/*
- * function to render the tags field into HTML
+/**
+ *
  */
-function theme_node_kaltura_entry_tags($node) {
-  if ($node->kaltura_tags) {
-    $tags = "<div class=\"kaltura_tags\"><label class=\"field_title\">". t('Kaltura Tags') .": </label>". check_plain($node->kaltura_tags) .'</div>';
-  }
-  return $tags;
+function template_preprocess_node_kaltura_entry_tags(&$variables) {
+  $variables['tag_title'] = t('Kaltura Tags');
+  $variables['tags'] = check_plain($variables['node']->kaltura_tags);
 }
 
 /*
