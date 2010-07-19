@@ -467,15 +467,7 @@ function update_entry_node_taxonomy(&$node) {
  * Implementation of hook_insert().
  */
 function node_kaltura_entry_insert(&$node) {
-
-  $sql = 'INSERT INTO {node_kaltura} (vid, nid, kaltura_entryId, kaltura_tags, kaltura_admin_tags, kstatus, kaltura_media_type, kaltura_duration, '.
-    'kaltura_thumbnail_url, kaltura_partner_data, kaltura_source, kaltura_source_id, kaltura_source_link, kaltura_width, kaltura_height, '.
-    'kaltura_download_url, kaltura_media_date, kaltura_views, kaltura_plays, kaltura_votes, kaltura_rank, kaltura_total_rank, kaltura_entry_data, kaltura_video_comment)'.
-    ' VALUES (%d, %d, \'%s\', \'%s\', \'%s\', %d, %d, %d, \'%s\', \'%s\', %d, %d, \'%s\', %d, %d, \'%s\', \'%s\', %d, %d, %d, %d, %d, \'%s\', %d)';
-  db_query($sql, $node->vid, $node->nid, $node->kaltura_entryId, $node->kaltura_tags, $node->kaltura_admin_tags, $node->kstatus, $node->kaltura_media_type,
-    $node->kaltura_duration, $node->kaltura_thumbnail_url, $node->kaltura_partner_data, $node->kaltura_source, $node->kaltura_source_id,
-    $node->kaltura_source_link, $node->kaltura_width, $node->kaltura_height, $node->kaltura_download_url, $node->kaltura_media_date, $node->kaltura_views,
-    $node->kaltura_plays, $node->kaltura_votes, $node->kaltura_rank, $node->kaltura_total_rank, $node->kaltura_entry_data, $node->kaltura_video_comment);
+  drupal_write_record('node_kaltura', $node);
   update_entry_node_taxonomy($node);
 }
 
