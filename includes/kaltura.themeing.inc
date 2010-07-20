@@ -550,8 +550,7 @@ function theme_contribution_wizard_field($theme_params, $field_id, $no_collect_e
           <ul id="sidemenu">
           <li id="tab-kaltura"><a class="current" href="'. url($_GET['q']) .'">Add Interactive Video</a></li>
           <li id="tab-kaltura_browse"><a href="'. url('kaltura/entries/allow-insert/'. $field_id, array( 'query' => array( 'filter' => $add_filter, 'cwurl' => url($_GET['q']) ) )) .'">Browse Interactive Videos</a></li>
-          <li><span>xzczczczcxxz</span></li>
-          <li><span class="close" href="#" onclick="window.top.kalturaCloseModalBox();return FALSE;">&nbsp;&nbsp;&nbsp;&nbsp;</span></li>
+          <li class="tab-kaltura-close"><span class="close" href="#" onclick="window.top.kalturaCloseModalBox();return FALSE;">&nbsp;&nbsp;&nbsp;&nbsp;</span></li>
           </ul>
       </div>';
   }
@@ -754,30 +753,6 @@ function theme_advanced_editor($theme_params, $no_refresh) {
   ';
 
   return theme("kaltura_modal", array("javascript" => $javascript, "flashEmbed" => $flash_embed));
-}
-
-/**
- * main theme for modal windows
- */
-function theme_kaltura_modal($theme_params) {
-  return '
-    <html>
-    <head>
-    <link rel="stylesheet" type="text/css" href="'. base_path() . drupal_get_path('module', 'kaltura') .'/style/kaltura.css"/>
-    <style type="text/css">
-            html, body { margin:0; padding:0; }
-    </style>
-    <script type="text/javascript" src="'. base_path() . drupal_get_path('module', 'kaltura') .'/js/kaltura.js"></script>
-    <script type="text/javascript" src="'. base_path() .'misc/jquery.js"></script>
-    <script type="text/javascript" src="'. base_path() . drupal_get_path('module', 'kaltura') .'/js/swfobject.js"></script>
-    <script type="text/javascript">
-      '. $theme_params["javascript"] .'
-    </script>
-    </head>
-    <body>
-      '. $theme_params["flashEmbed"] .'
-    </body>
-    </html>';
 }
 
 /**

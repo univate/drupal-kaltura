@@ -162,22 +162,30 @@ function field_kaltura_field($op, &$node, $field, &$items, $teaser, $page) {
     case 'view':
     case 'insert' :
   //    var_dump($field); var_dump($items);
-      create_node_kaltura($node, $items, $field['type']);
+      try {
+        create_node_kaltura($node, $items, $field['type']);
+      }
+      catch (Exception $e) {
+      }
     case 'validate':
-      $allowed_values = content_allowed_values($field);
-      if (is_array($items)) {
-        foreach ($items as $delta => $item) {
-          $error_element = isset($item['_error_element']) ? $item['_error_element'] : '';
-          if (is_array($item) && isset($item['_error_element'])) unset($item['_error_element']);
-          if (!empty($item['value'])) {
-            if (count($allowed_values) && !array_key_exists($item['value'], $allowed_values)) {
-              form_set_error($error_element, t('%name: illegal value.', array('%name' => t($field['widget']['label']))));
-            }
-            if (!empty($field['max_length']) && drupal_strlen($item['value']) > $field['max_length']) {
-              form_set_error($error_element, t('%name: the value may not be longer than %max characters.', array('%name' => $field['widget']['label'], '%max' => $field['max_length'])));
+      try {
+        $allowed_values = content_allowed_values($field);
+        if (is_array($items)) {
+          foreach ($items as $delta => $item) {
+            $error_element = isset($item['_error_element']) ? $item['_error_element'] : '';
+            if (is_array($item) && isset($item['_error_element'])) unset($item['_error_element']);
+            if (!empty($item['value'])) {
+              if (count($allowed_values) && !array_key_exists($item['value'], $allowed_values)) {
+                form_set_error($error_element, t('%name: illegal value.', array('%name' => t($field['widget']['label']))));
+              }
+              if (!empty($field['max_length']) && drupal_strlen($item['value']) > $field['max_length']) {
+                form_set_error($error_element, t('%name: the value may not be longer than %max characters.', array('%name' => $field['widget']['label'], '%max' => $field['max_length'])));
+              }
             }
           }
         }
+      }
+      catch (Exception $e) {
       }
       return $items;
 
@@ -469,6 +477,7 @@ function field_kaltura_widget_info() {
  * (see nodereference and userreference).
  */
 function field_kaltura_elements() {
+  _kaltura_init();
   return array(
     'field_kaltura_textfield' => array(
       '#input' => TRUE,
