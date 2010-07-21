@@ -76,32 +76,13 @@ function kaltura_replace_tags($content, $is_comment = FALSE, $replace_to_thumb =
 
       $html .= $comment_div;
       */
-
-      $kaltura_settings = $embed_options;
-      $kaltura_settings['uid'] = $user->uid;
-      $kaltura_settings['contribution_wizard_url'] = url("kaltura/contribution_wizard/");
-      $kaltura_settings['editor_height'] = (variable_get('kaltura_editor_height', ''))? variable_get('kaltura_editor_height', '') : KalturaSettings_SE_HEIGHT;
-      $kaltura_settings['editor_width'] = (variable_get('kaltura_editor_width', ''))? variable_get('kaltura_editor_width', ''): KalturaSettings_SE_WIDTH;
-      $kaltura_settings['editor_url'] = (variable_get('kaltura_editor_URL', ''))? variable_get('kaltura_editor_URL', ''): KalturaSettings_SE_URL;
-      
-      drupal_add_js(array('kaltura' => array($embed_options['media_id'] => $kaltura_settings)),'setting');
-      drupal_add_js(drupal_get_path("module", "kaltura") ."/kaltura.js");
-
-      $html = theme('kaltura_player', $embed_options['media_id'], array('show_embed' => $show_embed));
+      $embed_options['show_embed'] = $show_embed;
+      $html = theme('kaltura_player', $embed_options['media_id'], $embed_options);
     }
     $content = str_replace($kaltura_tag, $html, $content);
   }
 
   return $content;
-}
-
-/** 
- * Preprocessor function for kaltura player
- */
-function template_preprocess_kaltura_player(&$variables) {
-  if ($variables['options']['show_embed']) {
-    $variables['embed_title'] = t('Embed code of this video:');
-  }
 }
 
 /**

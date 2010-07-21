@@ -953,4 +953,21 @@ function theme_kaltura_modal($theme_params) {
     </html>';
 }
 
+/**
+ * Template preprocessor function for kaltura player
+ */
+function template_preprocess_kaltura_player(&$variables) {
+  $kaltura_settings = $variables['options'];
+  $kaltura_settings['uid'] = $user->uid;
+  $kaltura_settings['contribution_wizard_url'] = url("kaltura/contribution_wizard/");
+  $kaltura_settings['editor_height'] = (variable_get('kaltura_editor_height', ''))? variable_get('kaltura_editor_height', '') : KalturaSettings_SE_HEIGHT;
+  $kaltura_settings['editor_width'] = (variable_get('kaltura_editor_width', ''))? variable_get('kaltura_editor_width', ''): KalturaSettings_SE_WIDTH;
+  $kaltura_settings['editor_url'] = (variable_get('kaltura_editor_URL', ''))? variable_get('kaltura_editor_URL', ''): KalturaSettings_SE_URL;
+  drupal_add_js(array('kaltura' => array($variables['media_id'] => $kaltura_settings)),'setting');
+
+  drupal_add_js(drupal_get_path("module", "kaltura") ."/kaltura.js");
+  if ($variables['options']['show_embed']) {
+    $variables['embed_title'] = t('Embed code of this video:');
+  }
+}
 

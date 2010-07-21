@@ -269,22 +269,26 @@ function kaltura_get_default_display($item, $teaser, $node) {
 
   if (is_array($entries) && count($entries)) {
     foreach ($entries as $entry_id) {
-      $width = $item['#kaltura_field']['player_width'];
-      $height = $item['#kaltura_field']['player_height'];
-      $uiconf = (empty($item['#kaltura_field']['entry_widget']) ? '' : 'uiconf_id="'.$item['#kaltura_field']['entry_widget'].'"');
-      $dim ="";
       if (!$entry_id) continue;
 
-      if (!empty($width) && !empty($height))
-      {
-    $dim = ' width="'.$width.'" height="'.$height.'"';
+      $param = array(
+         'mix' => $entry_id,
+         'size' => 'large',
+         'width' => $item['#kaltura_field']['player_width'],
+         'height' => $item['#kaltura_field']['player_height'],
+      );
+      if (!empty($item['#kaltura_field']['entry_widget'])) {
+        $param['uiconf_id'] = $item['#kaltura_field']['entry_widget'];
       }
-     $text = '<div class="field-entry-'. $entry_id .'">[kaltura-widget mix="'. $entry_id .'" size="large" '. $uiconf . $dim.' /]</div>';
-
+      $options = kaltura_get_embed_options($param);
+      $options['show_embed'] = $show_embed;
+      if (!empty($options['media_id'])) {
+        $text .= '<div class="field-entry-'. $entry_id .'">'. theme('kaltura_player', $entry_id, $options) . '</div>';
+      }
     }
   }
 
-  return kaltura_replace_tags($text, FALSE, FALSE, $node_update_access, $show_embed, $content_type);
+  return $text;
 }
 
 function kaltura_get_full_display($item, $teaser, $node) {
@@ -296,17 +300,23 @@ function kaltura_get_full_display($item, $teaser, $node) {
 
   if (is_array($entries) && count($entries)) {
     foreach ($entries as $entry_id) {
-      $width = $item['#kaltura_field']['thumbsize_width'];
-      $height = $item['#kaltura_field']['thumbsize_height'];
       if (!$entry_id) continue;
 
-     $text = '<div class="field-entry-'. $entry_id .'">[kaltura-widget mix="'. $entry_id .'" size="large"  /]</div>';
-
+      $param = array(
+         'mix' => $entry_id,
+         'size' => 'large',
+         'width' = $item['#kaltura_field']['thumbsize_width'],
+         'height' = $item['#kaltura_field']['thumbsize_height'],
+      );
+      $options = kaltura_get_embed_options($param);
+      $options['show_embed'] = $show_embed;
+      if (!empty($options['media_id'])) {
+        $text .= '<div class="field-entry-'. $entry_id .'">'. theme('kaltura_player', $entry_id, $options) . '</div>';
+      }
     }
   }
 
-  return kaltura_replace_tags($text, FALSE, FALSE, $node_update_access, $show_embed, $content_type);
-//  return $text;
+  return $text;
 }
 
 function kaltura_get_teaser_display($item, $teaser) {
