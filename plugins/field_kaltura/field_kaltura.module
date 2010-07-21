@@ -305,8 +305,8 @@ function kaltura_get_full_display($item, $teaser, $node) {
       $param = array(
          'mix' => $entry_id,
          'size' => 'large',
-         'width' = $item['#kaltura_field']['thumbsize_width'],
-         'height' = $item['#kaltura_field']['thumbsize_height'],
+         'width' => $item['#kaltura_field']['thumbsize_width'],
+         'height' => $item['#kaltura_field']['thumbsize_height'],
       );
       $options = kaltura_get_embed_options($param);
       $options['show_embed'] = $show_embed;
