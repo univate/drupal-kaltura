@@ -280,11 +280,11 @@ function kaltura_get_default_display($item, $teaser, $node) {
       if (!empty($item['#kaltura_field']['entry_widget'])) {
         $param['uiconf_id'] = $item['#kaltura_field']['entry_widget'];
       }
-      $options = kaltura_get_embed_options($param);
-      $options['show_embed'] = $show_embed;
-      if (!empty($options['media_id'])) {
-        $text .= '<div class="field-entry-'. $entry_id .'">'. theme('kaltura_player', $entry_id, $options) . '</div>';
-      }
+      $options = array(
+        'embed' => kaltura_get_embed_options($param),
+        'show_embed' => $show_embed,
+      );
+      $text .= '<div class="field-entry-'. $entry_id .'">'. theme('kaltura_player', $entry_id, $options) . '</div>';
     }
   }
 
@@ -308,11 +308,11 @@ function kaltura_get_full_display($item, $teaser, $node) {
          'width' => $item['#kaltura_field']['thumbsize_width'],
          'height' => $item['#kaltura_field']['thumbsize_height'],
       );
-      $options = kaltura_get_embed_options($param);
-      $options['show_embed'] = $show_embed;
-      if (!empty($options['media_id'])) {
-        $text .= '<div class="field-entry-'. $entry_id .'">'. theme('kaltura_player', $entry_id, $options) . '</div>';
-      }
+      $options = array(
+        'embed' => kaltura_get_embed_options($param),
+        'show_embed' => $show_embed,
+      );
+      $text .= '<div class="field-entry-'. $entry_id .'">'. theme('kaltura_player', $entry_id, $options) . '</div>';
     }
   }
 
