@@ -757,7 +757,8 @@ function kaltura_choose_player($as_single_form, $type, $node_type, $return_widge
       'progress' => array(
         'type' => 'throbber',
       ),
-    )
+    ),
+    '#weight' => -5,
   );
   $form['default_widget']['sample_widget'] = array(
     '#value' => '<div id="kaltura_sample_widget_wrapper_'. $type .'">'. theme('kaltura_player', $type) .'</div>',

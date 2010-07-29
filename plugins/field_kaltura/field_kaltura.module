@@ -85,6 +85,9 @@ function field_kaltura_field_settings($op, $field) {
         '#type' => 'fieldset',
         '#title' => t('Video Display'),
       );
+      // @hack: we need to mess around with the form names.
+      $players['default_widget']['entry_widget'] = $players['default_widget']['default_widget_video'];
+      unset($players['default_widget']['default_widget_video']);
 
       $form['kaltura_entry_video_display']['entry_widget'] = $players['default_widget'];
       $form['kaltura_entry_video_display']['entry_widget']['#default_value'] = $saved_player;
