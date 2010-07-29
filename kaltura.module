@@ -188,6 +188,9 @@ function kaltura_theme() {
       'arguments' => array('media_id' => NULL, 'options' => NULL),
       'path' => drupal_get_path("module", "kaltura") . '/templates',
     ),
+    'kaltura_thumbnail' => array(
+      'arguments' => array('media_id' => NULL, 'options' => array()),
+    ),
   );
 
   return $themes;
@@ -971,3 +974,43 @@ function template_preprocess_kaltura_player(&$variables) {
   }
 }
 
+
+/**
+ *
+ */
+function theme_kaltura_thumbnail($media_id, $options = array()) {
+  $partner_config = KalturaHelpers::getServiceConfiguration();
+  $kaltura_server = (variable_get('kaltura_server_url', '')) ? variable_get('kaltura_server_url', '') : KalturaSettings_SERVER_URL;
+  $url = $kaltura_server .'/p/'. $partner_config->partnerId .'/sp/'. $partner_config->subPartnerId .'/thumbnail/entry_id/'. $media_id;
+
+  $thumbnail_options = array(
+    'widget_id',
+    'version',
+    'width',
+    'height',
+    'type',
+    'bgcolor',
+    'crop_provider',
+    'quality',
+    'src_x',
+    'src_y',
+    'src_w',
+    'src_h',
+    'rel_width',
+    'rel_height',
+    'vid_sec',
+    'vid_slice',
+    'vid_slice',
+  );
+  foreach ($options as $index => $value) {
+    if (in_array($index, $thumbnail_options)) {
+      $url .= '/'. $index .'/'. $value;
+    }
+    if ($index == 'rotator') {
+      // http://www.kaltura.org/kaltura-thumb-rotator-guide
+      $class = 'rotating';
+    }
+  }
+  $output = '<img src="'. $url .'" class="kaltura-thumbnail '. $class .'" />';
+  return $output;
+}
