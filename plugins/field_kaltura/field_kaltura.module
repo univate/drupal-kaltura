@@ -247,15 +247,11 @@ function create_node_kaltura($node, $items, $type) {
   }
 }
 
+/**
+ * Create a new kaltura node record.
+ */
 function node_field_insert($node) {
-  $sql = 'INSERT INTO {node_kaltura} (vid, nid, kaltura_entryId, kaltura_tags, kaltura_admin_tags, kstatus, kaltura_media_type, kaltura_duration, '.
-    'kaltura_thumbnail_url, kaltura_partner_data, kaltura_source, kaltura_source_id, kaltura_source_link, kaltura_width, kaltura_height, '.
-    'kaltura_download_url, kaltura_media_date, kaltura_views, kaltura_plays, kaltura_votes, kaltura_rank, kaltura_total_rank, kaltura_entry_data)'.
-    ' VALUES (%d, %d, \'%s\', \'%s\', \'%s\', %d, %d, %d, \'%s\', \'%s\', %d, %d, \'%s\', %d, %d, \'%s\', \'%s\', %d, %d, %d, %d, %d, \'%s\')';
-  db_query($sql, $node->vid, $node->nid, $node->kaltura_entryId, $node->kaltura_tags, $node->kaltura_admin_tags, $node->kstatus, $node->kaltura_media_type,
-    $node->kaltura_duration, $node->kaltura_thumbnail_url, $node->kaltura_partner_data, $node->kaltura_source, $node->kaltura_source_id,
-    $node->kaltura_source_link, $node->kaltura_width, $node->kaltura_height, $node->kaltura_download_url, $node->kaltura_media_date, $node->kaltura_views,
-    $node->kaltura_plays, $node->kaltura_votes, $node->kaltura_rank, $node->kaltura_total_rank, $node->kaltura_entry_data);
+  drupal_write_record('node_kaltura', $node);
   //kaltura_update_mix_node_taxonomy($node);
 }
 
@@ -346,20 +342,7 @@ function kaltura_get_thumbnail_display($item, $teaser, $field) {
   if (is_array($entries) && count($entries)) {
     foreach ($entries as $entry_id) {
       if (!$entry_id) continue;
-      /*$mynode = node_load(kaltura_get_node_for_mix($entry_id));
-      if ($mynode) {
-        if ($mynode->type == 'kaltura_entry') {
-          $all_field .= '<div class="field-entry-'. $entry_id .'">'. theme('node_kaltura_entry_thumbnail_url', $mynode, $teaser, FALSE, $size) .'</div>';
-        }
-        else {
-          $all_field .= '<div class="field-entry-'. $entry_id .'">'. theme('node_kaltura_mix_thumbnail_url', $mynode, $teaser, FALSE, $size) .'</div>';
-        }
-      }
-      */
-      $kaltura_metadata = katlura_get_metadata_for_mix($entry_id);
-      if($kaltura_metadata) {
-        $all_field .= '<div class="field-entry-'. $entry_id .'">'. theme('node_kaltura_mix_thumbnail_url', $kaltura_metadata, $teaser, FALSE, $size) .'</div>';
-      }
+      $all_field .= '<div class="field-entry-'. $entry_id .'">'. theme('kaltura_thumbnail', $entry_id, $size) .'</div>';
     }
   }
   $text = $all_field;
