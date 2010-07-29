@@ -403,7 +403,7 @@ function node_kaltura_entry_form(&$node, &$param) {
  * Implementation of hook_theme().
  */
 function node_kaltura_entry_theme() {
-  $path = drupal_get_path("module", "node_kaltura_entry") . '/theme';
+  $path = drupal_get_path("module", "node_kaltura_entry") . '/templates';
   $themes = array(
     'node_kaltura_entry_tags' => array(
       'arguments' => array('element' => NULL),
